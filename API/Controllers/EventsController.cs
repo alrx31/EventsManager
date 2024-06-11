@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         //1. Получение списка всех событий;
-        [HttpGet("tests")]
+        [HttpGet("events")]
         public async Task<IActionResult> GetAllEvents()
         {
             var events = await _eventService.GetAllEventsAsync();
@@ -55,7 +55,7 @@ namespace API.Controllers
         //4. Добавление нового события;
 
         [HttpPost]
-        public async Task<IActionResult> AddEvent(Event newEvent)
+        public async Task<IActionResult> AddEvent([FromBody] Event newEvent)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

@@ -8,12 +8,11 @@ namespace EventManagement.Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
         public string Location { get; set; }
         public string Category { get; set; }
         public int MaxParticipants { get; set; }
         //add image 
-        public byte[] Image { get; set; }
         
         
         public List<Participant> Participants { get; set; }

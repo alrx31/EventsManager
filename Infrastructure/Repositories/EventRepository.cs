@@ -89,10 +89,10 @@ namespace EventManagement.Infrastructure.Repositories
 
             IQueryable<Event> query = _dbContext.Events;
 
-            if (criteria.Date.HasValue)
+            /*if (criteria.Date.HasValue)
             {
                 query = query.Where(e => e.Date == criteria.Date.Value);
-            }
+            }*/
 
             if (!string.IsNullOrEmpty(criteria.Location))
             {

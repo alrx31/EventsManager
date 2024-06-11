@@ -31,5 +31,12 @@ public class ApplicationDbContext:DbContext
             .HasForeignKey(ep => ep.ParticipantId);
     }
     
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql("YourConnectionString");
+        }
+    }
     
 }
