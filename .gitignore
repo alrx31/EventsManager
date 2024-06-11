@@ -145,3 +145,4 @@
 /obj/project.packagespec.json
 /obj/rider.project.model.nuget.info
 /obj/rider.project.restore.info
+/.idea/
