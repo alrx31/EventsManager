@@ -1,5 +1,6 @@
 ﻿using EventManagement.Application.Models;
 using EventManagement.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace EventManagement.Infrastructure.Repositories
 {
@@ -13,7 +14,6 @@ namespace EventManagement.Infrastructure.Repositories
         Task UpdateEventAsync(Event updatedEvent);
         Task DeleteEventAsync(int id);
         Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria);
-        
         
         // another
         /*Task AddParticipantToEventAsync(int eventId, Participant participant);

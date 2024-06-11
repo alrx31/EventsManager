@@ -2,15 +2,17 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement", "EventManagement.csproj", "{05EAAFBA-04B0-4EC5-995C-9A787B20183E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement.Domain", "EventManagement.Domain\EventManagement.Domain.csproj", "{83985329-07A6-47F0-AE5A-19FD4165FB77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{83985329-07A6-47F0-AE5A-19FD4165FB77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement.Infrastructure", "EventManagement.Infrastructure\EventManagement.Infrastructure.csproj", "{B9C3FDD0-BAA0-4650-8B07-C035EC8BDCBB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{B9C3FDD0-BAA0-4650-8B07-C035EC8BDCBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement.Shared", "EventManagement.Shared\EventManagement.Shared.csproj", "{FFC9A72F-3A8A-4A85-B413-F5FACD0AA631}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{FFC9A72F-3A8A-4A85-B413-F5FACD0AA631}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement.Application", "EventManagement.Application\EventManagement.Application.csproj", "{BD06F07B-4D94-4156-AAFB-88488BE53FDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{BD06F07B-4D94-4156-AAFB-88488BE53FDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement.Infrastructure.Persistence", "EventManagement.Infrastructure.Persistence\EventManagement.Infrastructure.Persistence.csproj", "{018DBAF4-1846-42AF-829E-AAB7F7D24E5D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{DB292730-DEB3-4869-96F5-A6242B402332}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{78304338-82DA-4745-8EBD-D89D0A6023F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,9 +40,13 @@ Global
 		{BD06F07B-4D94-4156-AAFB-88488BE53FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD06F07B-4D94-4156-AAFB-88488BE53FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD06F07B-4D94-4156-AAFB-88488BE53FDD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{018DBAF4-1846-42AF-829E-AAB7F7D24E5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{018DBAF4-1846-42AF-829E-AAB7F7D24E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{018DBAF4-1846-42AF-829E-AAB7F7D24E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{018DBAF4-1846-42AF-829E-AAB7F7D24E5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB292730-DEB3-4869-96F5-A6242B402332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB292730-DEB3-4869-96F5-A6242B402332}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB292730-DEB3-4869-96F5-A6242B402332}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB292730-DEB3-4869-96F5-A6242B402332}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78304338-82DA-4745-8EBD-D89D0A6023F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78304338-82DA-4745-8EBD-D89D0A6023F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78304338-82DA-4745-8EBD-D89D0A6023F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78304338-82DA-4745-8EBD-D89D0A6023F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

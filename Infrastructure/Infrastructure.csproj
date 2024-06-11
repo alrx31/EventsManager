@@ -4,15 +4,20 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>EventManagement.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\EventManagement.Domain\EventManagement.Domain.csproj" />
-      <ProjectReference Include="..\EventManagement.Infrastructure.Persistence\EventManagement.Infrastructure.Persistence.csproj" />
-      <ProjectReference Include="..\EventManagement.Shared\EventManagement.Shared.csproj" />
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
         <PrivateAssets>all</PrivateAssets>

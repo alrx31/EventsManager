@@ -1,5 +1,7 @@
 ﻿using EventManagement.Application.Models;
 using EventManagement.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagement.Application.Services
 {
@@ -9,17 +11,16 @@ namespace EventManagement.Application.Services
         Task<IEnumerable<Event>> GetAllEventsAsync();
         Task<Event> GetEventByIdAsync(int id);
         Task<Event> GetEventByNameAsync(string name);
-        Task AddEventAsync(Event newEvent);
-        Task UpdateEventAsync(Event updatedEvent);
-        Task DeleteEventAsync(int id);
+        Task<Task> AddEventAsync(Event newEvent);
+        Task<Task> UpdateEventAsync(Event updatedEvent);
+        Task<Task> DeleteEventAsync(int id);
         Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria);
-        
-        
+
         /*// another
         Task AddParticipantToEventAsync(int eventId, Participant participant);
         Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(int eventId);
         Task<Participant> GetParticipantByIdAsync(int id);
         Task RemoveParticipantFromEventAsync(int eventId, int participantId);*/
-        
+
     }
 }

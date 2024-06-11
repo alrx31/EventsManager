@@ -5,8 +5,11 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
+        
     </PropertyGroup>
-
+    <PropertyGroup>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="Mapster" Version="7.4.1-pre01" />
@@ -23,8 +26,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="EventManagement.Infrastructure\EventManagement.Infrastructure.csproj" />
-      <ProjectReference Include="EventManagement.Shared\EventManagement.Shared.csproj" />
+      <ProjectReference Include="Application\Application.csproj" />
+      <ProjectReference Include="Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="Shared\Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -37,10 +41,91 @@
       <_ContentIncludedByDefault Remove="EventManagement.Application\obj\EventManagement.Application.csproj.nuget.dgspec.json" />
       <_ContentIncludedByDefault Remove="EventManagement.Application\obj\project.assets.json" />
       <_ContentIncludedByDefault Remove="EventManagement.Application\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="API\bin\Debug\net8.0\API.deps.json" />
+      <_ContentIncludedByDefault Remove="Domain\obj\Debug\net8.0\Domain.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="Domain\obj\Domain.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Domain\obj\EventManagement.Domain.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Domain\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Domain\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Application\obj\Application.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Application\obj\Debug\net8.0\Application.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="Application\obj\EventManagement.Application.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Application\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Application\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure\bin\Debug\net8.0\EventManagement.Infrastructure.deps.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure\bin\Debug\net8.0\EventManagement.Infrastructure.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure\bin\Debug\net8.0\Infrastructure.deps.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure\bin\Debug\net8.0\Infrastructure.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="Shared\bin\Debug\net7.0\EventManagement.Shared.deps.json" />
+      <_ContentIncludedByDefault Remove="Shared\bin\Debug\net8.0\Shared.deps.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure\obj\Debug\net8.0\Infrastructure.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure\obj\Infrastructure.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Domain\bin\Debug\net8.0\Domain.deps.json" />
+      <_ContentIncludedByDefault Remove="API\obj\API.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="API\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="API\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Shared\obj\Debug\net8.0\Shared.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="Shared\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Shared\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Shared\obj\Shared.csproj.nuget.dgspec.json" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="EventManagement.Shared\" />
+      <Folder Include="Application\" />
+      <Folder Include="Client\" />
+      <Folder Include="Domain\" />
+      <Folder Include="Infrastructure\" />
+      <Folder Include="Shared\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Application\Services\EventService.cs">
+        <Link>EventManagement.Application\Services\EventService.cs</Link>
+      </Compile>
+      <Compile Update="Application\Services\IEventService.cs">
+        <Link>EventManagement.Application\Services\IEventService.cs</Link>
+      </Compile>
+      <Compile Update="Application\Services\IParticipantService.cs">
+        <Link>EventManagement.Application\Services\IParticipantService.cs</Link>
+      </Compile>
+      <Compile Update="Application\Services\ParticipantService.cs">
+        <Link>EventManagement.Application\Services\ParticipantService.cs</Link>
+      </Compile>
+      <Compile Update="Domain\Entities\Event.cs">
+        <Link>EventManagement.Domain\Entities\Event.cs</Link>
+      </Compile>
+      <Compile Update="Domain\Entities\Participant.cs">
+        <Link>EventManagement.Domain\Entities\Participant.cs</Link>
+      </Compile>
+      <Compile Update="Domain\Values\EventCriteria.cs">
+        <Link>EventManagement.Domain\Values\EventCriteria.cs</Link>
+      </Compile>
+      <Compile Update="Domain\Values\EventParticipant.cs">
+        <Link>EventManagement.Domain\Values\EventParticipant.cs</Link>
+      </Compile>
+      <Compile Update="Infrastructure\Repositories\EventRepository.cs">
+        <Link>EventManagement.Infrastructure\Repositories\EventRepository.cs</Link>
+      </Compile>
+      <Compile Update="Infrastructure\Repositories\IEventRepository.cs">
+        <Link>EventManagement.Infrastructure\Repositories\IEventRepository.cs</Link>
+      </Compile>
+      <Compile Update="Infrastructure\Repositories\IParticipantRepository.cs">
+        <Link>EventManagement.Infrastructure\Repositories\IParticipantRepository.cs</Link>
+      </Compile>
+      <Compile Update="Infrastructure\Repositories\ParticipantRepository.cs">
+        <Link>EventManagement.Infrastructure\Repositories\ParticipantRepository.cs</Link>
+      </Compile>
+      <Compile Update="Infrastructure\Persistence\ApplicationDbContext.cs">
+        <Link>EventManagement.Infrastructure\Persistence\ApplicationDbContext.cs</Link>
+      </Compile>
+      <Compile Update="Infrastructure\Persistence\UnitOfWork.cs">
+        <Link>EventManagement.Infrastructure\Persistence\UnitOfWork.cs</Link>
+      </Compile>
+      <Compile Update="Infrastructure\Persistence\IUnitOfWork.cs">
+        <Link>EventManagement.Infrastructure\Persistence\IUnitOfWork.cs</Link>
+      </Compile>
     </ItemGroup>
 
 </Project>

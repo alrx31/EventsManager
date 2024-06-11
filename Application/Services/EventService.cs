@@ -2,21 +2,21 @@
 using EventManagement.Application.Services;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Http;
 namespace EventManagement.Application;
+using Microsoft.AspNetCore.Hosting;
 
 public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
-    private IEventService _eventServiceImplementation;
-
     public EventService(IEventRepository eventRepository)
     {
         _eventRepository = eventRepository;
     }
     
-    public Task<IEnumerable<Event>> GetAllEventsAsync()
+    public async Task<IEnumerable<Event>> GetAllEventsAsync()
     {
-        var events = _eventRepository.GetAllEventsAsync();
+        var events = await _eventRepository.GetAllEventsAsync();
         if(events == null)
         {
             throw new Exception("No events found");
@@ -24,9 +24,9 @@ public class EventService : IEventService
         return events;
     }
     
-    public Task<Event> GetEventByIdAsync(int id)
+    public async Task<Event> GetEventByIdAsync(int id)
     {
-        var eventById = _eventRepository.GetEventByIdAsync(id);
+        var eventById = await _eventRepository.GetEventByIdAsync(id);
         if(eventById == null)
         {
             throw new Exception("Event not found");
@@ -34,9 +34,9 @@ public class EventService : IEventService
         return eventById;
     }
     
-    public Task<Event> GetEventByNameAsync(string name)
+    public async Task<Event> GetEventByNameAsync(string name)
     {
-        var eventByName = _eventRepository.GetEventByNameAsync(name);
+        var eventByName = await _eventRepository.GetEventByNameAsync(name);
         if(eventByName == null)
         {
             throw new Exception("Event not found");
@@ -44,7 +44,7 @@ public class EventService : IEventService
         return eventByName;
     }
     
-    public Task AddEventAsync(Event newEvent)
+    public async Task<Task> AddEventAsync(Event newEvent)
     {
         if(newEvent == null)
         {
@@ -53,7 +53,7 @@ public class EventService : IEventService
         return _eventRepository.AddEventAsync(newEvent);
     }
     
-    public Task UpdateEventAsync(Event updatedEvent)
+    public async Task<Task> UpdateEventAsync(Event updatedEvent)
     {
         if(updatedEvent == null)
         {
@@ -62,9 +62,9 @@ public class EventService : IEventService
         return _eventRepository.UpdateEventAsync(updatedEvent);
     }
     
-    public Task DeleteEventAsync(int id)
+    public async Task<Task> DeleteEventAsync(int id)
     {
-        var eventById = _eventRepository.GetEventByIdAsync(id);
+        var eventById = await _eventRepository.GetEventByIdAsync(id);
         if(eventById == null)
         {
             throw new Exception("Event not found");
@@ -72,12 +72,14 @@ public class EventService : IEventService
         return _eventRepository.DeleteEventAsync(id);
     }
     
-    public Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria)
+    public async Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria)
     {
         if(criteria == null)
         {
             throw new Exception("Criteria is null");
         }
-        return _eventRepository.GetEventsByCriteriaAsync(criteria);
+        return await _eventRepository.GetEventsByCriteriaAsync(criteria);
     }
+    
+    
 }

@@ -12,11 +12,11 @@ public class ParticipantService:IParticipantService
         _participantRepository = participantRepository;
     }
     
-    public Task RegisterParticipantToEventAsync(int eventId, Participant participant)
+    public Task RegisterParticipantToEventAsync(int eventId, int participantId)
     {
         if (eventId < 1) throw new Exception("Invalid Event Id");
-        if (participant == null) throw new Exception("Invalid Participant");
-        return _participantRepository.RegisterParticipantToEventAsync(eventId, participant);
+        if (participantId < 1) throw new Exception("Invalid Participant");
+        return _participantRepository.RegisterParticipantToEventAsync(eventId, participantId);
     }
 
     public Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(int eventId)

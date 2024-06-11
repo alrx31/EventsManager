@@ -12,6 +12,10 @@ namespace EventManagement.Domain.Entities
         public string Location { get; set; }
         public string Category { get; set; }
         public int MaxParticipants { get; set; }
+        //add image 
+        public byte[] Image { get; set; }
+        
+        
         public List<Participant> Participants { get; set; }
         public List<EventParticipant> EventParticipants { get; set; }
     }
