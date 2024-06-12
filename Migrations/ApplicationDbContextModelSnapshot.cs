@@ -49,13 +49,16 @@ namespace EventManagement.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Date")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -88,9 +91,6 @@ namespace EventManagement.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("EventId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -103,8 +103,6 @@ namespace EventManagement.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EventId");
 
                     b.ToTable("Participants");
                 });
@@ -128,18 +126,9 @@ namespace EventManagement.Migrations
                     b.Navigation("Participant");
                 });
 
-            modelBuilder.Entity("EventManagement.Domain.Entities.Participant", b =>
-                {
-                    b.HasOne("EventManagement.Domain.Entities.Event", null)
-                        .WithMany("Participants")
-                        .HasForeignKey("EventId");
-                });
-
             modelBuilder.Entity("EventManagement.Domain.Entities.Event", b =>
                 {
                     b.Navigation("EventParticipants");
-
-                    b.Navigation("Participants");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Entities.Participant", b =>
