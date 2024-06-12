@@ -55,7 +55,7 @@ namespace API.Controllers
         //4. Добавление нового события;
 
         [HttpPost]
-        public async Task<IActionResult> AddEvent([FromBody] Event newEvent)
+        public async Task<IActionResult> AddEvent([FromForm] EventDTO newEvent)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -66,13 +66,12 @@ namespace API.Controllers
         
         // 5. Изменение информации о существующем событии;
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEvent(int id, Event updatedEvent)
+        public async Task<IActionResult> UpdateEvent(int id, [FromBody] EventDTO updatedEvent)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            updatedEvent.Id = id;
-            await _eventService.UpdateEventAsync(updatedEvent);
+            await _eventService.UpdateEventAsync(id,updatedEvent);
             return Ok();
         }
         
@@ -99,8 +98,6 @@ namespace API.Controllers
         
         
         //8. Возможность добавления изображений к событиям и их хранение.
-        // включена в тип Event
-        
-        
+        // включена в тип Event        
     }
 }

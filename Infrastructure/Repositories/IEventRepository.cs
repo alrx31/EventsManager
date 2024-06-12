@@ -10,8 +10,8 @@ namespace EventManagement.Infrastructure.Repositories
         Task<IEnumerable<Event>> GetAllEventsAsync();
         Task<Event> GetEventByIdAsync(int id);
         Task<Event> GetEventByNameAsync(string name);
-        Task AddEventAsync(Event newEvent);
-        Task UpdateEventAsync(Event updatedEvent);
+        Task AddEventAsync(EventDTO newEvent);
+        Task UpdateEventAsync(int eventId,EventDTO updatedEvent);
         Task DeleteEventAsync(int id);
         Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria);
         

@@ -4,11 +4,8 @@ using EventManagement.Infrastructure.Repositories;
 
 namespace EventManagement.Infrastructure
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
-        IEventRepository EventRepository { get; }
-        IParticipantRepository ParticipantRepository { get; }
-        
-        Task<int> CompleteAsync();
+        Task CompleteAsync();
     }
 }

@@ -11,9 +11,9 @@ namespace EventManagement.Application.Services
         Task<IEnumerable<Event>> GetAllEventsAsync();
         Task<Event> GetEventByIdAsync(int id);
         Task<Event> GetEventByNameAsync(string name);
-        Task<Task> AddEventAsync(Event newEvent);
-        Task<Task> UpdateEventAsync(Event updatedEvent);
-        Task<Task> DeleteEventAsync(int id);
+        Task AddEventAsync(EventDTO newEvent);
+        Task UpdateEventAsync(int eventId,EventDTO updatedEvent);
+        Task DeleteEventAsync(int id);
         Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria);
 
         /*// another

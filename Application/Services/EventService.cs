@@ -1,6 +1,7 @@
 ﻿using EventManagement.Application.Models;
 using EventManagement.Application.Services;
 using EventManagement.Domain.Entities;
+using EventManagement.Infrastructure;
 using EventManagement.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 namespace EventManagement.Application;
@@ -9,9 +10,12 @@ using Microsoft.AspNetCore.Hosting;
 public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
-    public EventService(IEventRepository eventRepository)
+    private readonly IUnitOfWork _unitOfWork;
+    
+    public EventService(IEventRepository eventRepository, IUnitOfWork unitOfWork)
     {
         _eventRepository = eventRepository;
+        _unitOfWork = unitOfWork;
     }
     
     public async Task<IEnumerable<Event>> GetAllEventsAsync()
@@ -44,32 +48,46 @@ public class EventService : IEventService
         return eventByName;
     }
     
-    public async Task<Task> AddEventAsync(Event newEvent)
+    public async Task AddEventAsync(EventDTO newEvent)
     {
         if(newEvent == null)
         {
             throw new Exception("Event is null");
         }
-        return _eventRepository.AddEventAsync(newEvent);
+        // check all required fields
+        if(string.IsNullOrEmpty(newEvent.Name) ||
+           string.IsNullOrEmpty(newEvent.Description) ||
+           newEvent.Date == null ||
+           newEvent.MaxParticipants == null
+           )
+        {
+            throw new Exception("Required fields are empty");
+        }
+
+        await _eventRepository.AddEventAsync(newEvent);
+        await _unitOfWork.CompleteAsync();
+
     }
     
-    public async Task<Task> UpdateEventAsync(Event updatedEvent)
+    public async Task UpdateEventAsync(int eventId,EventDTO updatedEvent)
     {
-        if(updatedEvent == null)
+        if(updatedEvent == null || eventId < 1)
         {
             throw new Exception("Event is null");
         }
-        return _eventRepository.UpdateEventAsync(updatedEvent);
+        await _eventRepository.UpdateEventAsync(eventId,updatedEvent);
+        await _unitOfWork.CompleteAsync();
     }
     
-    public async Task<Task> DeleteEventAsync(int id)
+    public async Task DeleteEventAsync(int id)
     {
         var eventById = await _eventRepository.GetEventByIdAsync(id);
         if(eventById == null)
         {
             throw new Exception("Event not found");
         }
-        return _eventRepository.DeleteEventAsync(id);
+        await _eventRepository.DeleteEventAsync(id);
+        await _unitOfWork.CompleteAsync();
     }
     
     public async Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria)
