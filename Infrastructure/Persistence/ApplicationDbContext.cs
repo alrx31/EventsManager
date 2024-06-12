@@ -10,17 +10,18 @@ public class ApplicationDbContext:DbContext
     {
     }
     
+    // Tables
     
     public DbSet<Event> Events { get; set; }
     public DbSet<Participant> Participants { get; set; }
     public DbSet<EventParticipant> EventParticipants { get; set; }
+    public DbSet<ExtendedIdentityUser> ExtendedIdentityUsers { get; set; }
+ 
     
-    // many to many relationship
+    // Fluent API
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<EventParticipant>()
-            .HasKey(ep => new {ep.EventId, ep.ParticipantId});
         modelBuilder.Entity<EventParticipant>()
             .HasOne(ep => ep.Event)
             .WithMany(e => e.EventParticipants)
@@ -29,14 +30,10 @@ public class ApplicationDbContext:DbContext
             .HasOne(ep => ep.Participant)
             .WithMany(p => p.EventParticipants)
             .HasForeignKey(ep => ep.ParticipantId);
+        // one to many
+        modelBuilder.Entity<ExtendedIdentityUser>()
+            .HasOne(ex=>ex.Participant)
+            .WithMany(p=>p.IdentityUsers)
+            .HasForeignKey(e=>e.ParticipantId);
     }
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql("YourConnectionString");
-        }
-    }
-    
 }

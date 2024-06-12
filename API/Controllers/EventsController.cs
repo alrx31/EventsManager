@@ -66,7 +66,7 @@ namespace API.Controllers
         
         // 5. Изменение информации о существующем событии;
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEvent(int id, [FromBody] EventDTO updatedEvent)
+        public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventDTO updatedEvent)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

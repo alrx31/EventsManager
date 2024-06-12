@@ -1,4 +1,6 @@
-﻿using EventManagement.Application.Services;
+﻿using EventManagement.Application.Models;
+using EventManagement.Application.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -9,12 +11,48 @@ namespace API.Controllers;
 public class ParticipantsController:ControllerBase
 {
     private readonly IParticipantService _participantService;
+    private readonly IAuthService _authService;
     
-    
-    public ParticipantsController(IParticipantService participantService)
+    public ParticipantsController(IParticipantService participantService, IAuthService authService)
     {
         _participantService = participantService;
+        _authService = authService;
     }
+    
+    [HttpPut("register")]
+    public async Task<IActionResult> RegisterParticipantAsync([FromBody] ParticipantRegisterDTO participantRegisterDTO)
+    {
+        if(!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        await _participantService.RegisterParticipantAsync(participantRegisterDTO);
+        return Ok();
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var loginRes = await _authService.Login(model);
+        if (loginRes.IsLoggedIn) return Ok(loginRes);
+        return Unauthorized();
+    }
+    
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenModel model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var loginRes = await _authService.RefreshToken(model);
+        if (loginRes.IsLoggedIn) return Ok(loginRes);
+        return Unauthorized();
+    }
+        
+        
+    //[HttpPost[("/login")]]
     
     //1. Регистрация участия пользователя в событии;
     [HttpPut("{eventId}/register/{participantId}")]

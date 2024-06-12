@@ -24,17 +24,53 @@ namespace EventManagement.Migrations
 
             modelBuilder.Entity("EventManagement.Application.Models.EventParticipant", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
 
                     b.Property<int>("ParticipantId")
                         .HasColumnType("integer");
 
-                    b.HasKey("EventId", "ParticipantId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
 
                     b.HasIndex("ParticipantId");
 
                     b.ToTable("EventParticipants");
+                });
+
+            modelBuilder.Entity("EventManagement.Application.Models.ExtendedIdentityUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ParticipantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParticipantId");
+
+                    b.ToTable("ExtendedIdentityUsers");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Entities.Event", b =>
@@ -99,6 +135,10 @@ namespace EventManagement.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -126,6 +166,17 @@ namespace EventManagement.Migrations
                     b.Navigation("Participant");
                 });
 
+            modelBuilder.Entity("EventManagement.Application.Models.ExtendedIdentityUser", b =>
+                {
+                    b.HasOne("EventManagement.Domain.Entities.Participant", "Participant")
+                        .WithMany("IdentityUsers")
+                        .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Participant");
+                });
+
             modelBuilder.Entity("EventManagement.Domain.Entities.Event", b =>
                 {
                     b.Navigation("EventParticipants");
@@ -134,6 +185,8 @@ namespace EventManagement.Migrations
             modelBuilder.Entity("EventManagement.Domain.Entities.Participant", b =>
                 {
                     b.Navigation("EventParticipants");
+
+                    b.Navigation("IdentityUsers");
                 });
 #pragma warning restore 612, 618
         }

@@ -17,13 +17,11 @@ namespace EventManagement.Infrastructure.Repositories
     public class EventRepository : IEventRepository
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public EventRepository(ApplicationDbContext dbContext, IUnitOfWork unitOfWork,IMapper mapper)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -84,7 +82,7 @@ namespace EventManagement.Infrastructure.Repositories
 
             await _dbContext.Events.AddAsync(newEventEntity);
 
-            await _dbContext.SaveChangesAsync(); // Сохраняем изменения в базе данных с помощью Unit of Work
+            await _dbContext.SaveChangesAsync();
         }
 
         
@@ -122,11 +120,11 @@ namespace EventManagement.Infrastructure.Repositories
             }
             if(updatedEvent.Date != null)
             {
-                eventToUpdate.Date = updatedEvent.Date;
+                eventToUpdate.Date = updatedEvent.Date ?? new DateTime();
             }
-            if(updatedEvent.MaxParticipants != 0)
+            if(updatedEvent.MaxParticipants != null)
             {
-                eventToUpdate.MaxParticipants = updatedEvent.MaxParticipants;
+                eventToUpdate.MaxParticipants = updatedEvent.MaxParticipants ?? 0;
             }
             if (updatedEvent.ImageData != null && updatedEvent.ImageData.Length > 0)
             {

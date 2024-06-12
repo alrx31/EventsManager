@@ -57,8 +57,8 @@ public class EventService : IEventService
         // check all required fields
         if(string.IsNullOrEmpty(newEvent.Name) ||
            string.IsNullOrEmpty(newEvent.Description) ||
-           newEvent.Date == null ||
-           newEvent.MaxParticipants == null
+           newEvent.MaxParticipants < 1 ||
+           newEvent.Date == null
            )
         {
             throw new Exception("Required fields are empty");

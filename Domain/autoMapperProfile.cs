@@ -12,5 +12,10 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.ImageData, opt => opt.Ignore())
             .ForMember(dest => dest.EventParticipants, opt => opt.Ignore());
+        
+        CreateMap<ParticipantRegisterDTO, Participant>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.EventParticipants, opt => opt.Ignore());
+        
     }
 }

@@ -22,6 +22,7 @@ namespace API.Middlewares
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 // Обработка исключения
                 await HandleExceptionAsync(context, ex);
             }

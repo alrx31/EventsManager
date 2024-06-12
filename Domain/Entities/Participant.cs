@@ -13,5 +13,10 @@ namespace EventManagement.Domain.Entities
         public DateTime RegistrationDate { get; set; }
         public string Email { get; set; }
         public List<EventParticipant> EventParticipants { get; set; }
+        
+        public string Password { get; set; }
+        
+        
+        public List<ExtendedIdentityUser> IdentityUsers { get; set; }
     }
 }
