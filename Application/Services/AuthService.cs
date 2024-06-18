@@ -29,6 +29,7 @@ public class AuthService:IAuthService
             return response;
         };
         response.IsLoggedIn = true;
+        response.UserId = await _participantRepository.GetParticipantIdByEmailAsync(user.Email);
         response.JwtToken = _jwtService.GenerateJwtToken(identifyUser.Email);
         response.RefreshToken = _jwtService.GenerateRefreshToken();
         var identityUserTokenModel =

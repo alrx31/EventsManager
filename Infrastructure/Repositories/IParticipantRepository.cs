@@ -15,10 +15,13 @@ public interface IParticipantRepository
     Task RegisterParticipantAsync(ParticipantRegisterDTO user);
     Task<Participant> LoginAsync(LoginModel model);
     
-    Task<LoginModel> GetParticipantByEmailAsync(string email); 
+    Task<LoginModel> GetParticipantByEmailAsync(string email);
+    Task<int> GetParticipantIdByEmailAsync(string email);
+    
     Task<bool> CheckPasswordAsync(LoginModel user,string password);
     
     Task<ExtendedIdentityUser> getExtendedIdentityUserByEmailAsync(string email);
     Task UpdateRefreshTokenAsync(ExtendedIdentityUser user);
     Task AddRefreshTokenField(ParticipantRegisterDTO user);
+    
 }

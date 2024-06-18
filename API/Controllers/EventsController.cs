@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -19,7 +20,7 @@ namespace API.Controllers
             _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
         }
 
-        //1. Получение списка всех событий;
+        //1. Получение списка всех событий; +
         [HttpGet("events")]
         public async Task<IActionResult> GetAllEvents()
         {
@@ -29,7 +30,7 @@ namespace API.Controllers
 
             return Ok(events);
         }
-        //2. Получение определенного события по его Id;
+        //2. Получение определенного события по его Id;+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEventById(int id)
         {
@@ -40,9 +41,9 @@ namespace API.Controllers
             return Ok(eventById);
         }
         
-        //3. Получение события по его названию;
+        //3. Получение события по его названию; +
 
-        [HttpGet("test/{name}")]
+        [HttpGet("event/{name}")]
         public async Task<IActionResult> GetEventByName(string name)
         {
             var eventByName = await _eventService.GetEventByNameAsync(name);
@@ -52,9 +53,10 @@ namespace API.Controllers
             return Ok(eventByName);
         }
         
-        //4. Добавление нового события;
+        //4. Добавление нового события;+
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddEvent([FromForm] EventDTO newEvent)
         {
             if (!ModelState.IsValid)
@@ -66,6 +68,7 @@ namespace API.Controllers
         
         // 5. Изменение информации о существующем событии;
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventDTO updatedEvent)
         {
             if (!ModelState.IsValid)
@@ -75,18 +78,20 @@ namespace API.Controllers
             return Ok();
         }
         
-        //6. Удаление события;
+        //6. Удаление события; +
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteEvent(int id)
         {
             await _eventService.DeleteEventAsync(id);
             return Ok();
         }
 
-        //7. Получение списка событий по определенным критериям (по дате, месту проведения, категории события)
+        //7. Получение списка событий по определенным критериям (по дате, месту проведения, категории события) +
         
         [HttpPost("filter")]
+        [Authorize]
         public async Task<IActionResult> FilterEvents([FromBody] EventCriteria criteria)
         {
             if (criteria == null)
@@ -97,7 +102,7 @@ namespace API.Controllers
         }
         
         
-        //8. Возможность добавления изображений к событиям и их хранение.
+        //8. Возможность добавления изображений к событиям и их хранение. +
         // включена в тип Event        
     }
 }

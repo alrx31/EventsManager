@@ -107,6 +107,13 @@ namespace EventManagement.Infrastructure.Repositories
             };
         }
 
+        public async Task<int> GetParticipantIdByEmailAsync(string email)
+        {
+            var user = await _context.Participants.FirstOrDefaultAsync(p => p.Email == email);
+            if(user == null) throw new Exception("User Not Found");
+            return user.Id;
+        } 
+
         public Task<bool> CheckPasswordAsync(LoginModel user, string password)
         {
             return Task.FromResult(user.Password == GetHash(password));
@@ -151,7 +158,6 @@ namespace EventManagement.Infrastructure.Repositories
 
 
         private string GetHash(string pass)
-    
         {
             var data = System.Text.Encoding.ASCII.GetBytes(pass);
             data = new System.Security.Cryptography.SHA256Managed().ComputeHash(data);

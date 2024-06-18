@@ -1,4 +1,5 @@
-﻿using EventManagement.Application.Models;
+﻿using System.Threading.Tasks;
+using EventManagement.Application.Models;
 using EventManagement.Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ public class ParticipantsController:ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    public async Task<IActionResult> Login(LoginModel model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -39,7 +40,7 @@ public class ParticipantsController:ControllerBase
         if (loginRes.IsLoggedIn) return Ok(loginRes);
         return Unauthorized();
     }
-    
+
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenModel model)
     {
@@ -50,20 +51,15 @@ public class ParticipantsController:ControllerBase
         if (loginRes.IsLoggedIn) return Ok(loginRes);
         return Unauthorized();
     }
-        
-        
-    //[HttpPost[("/login")]]
-    
-    //1. Регистрация участия пользователя в событии;
+
+    //1. Регистрация участия пользователя в событии;+
     [HttpPut("{eventId}/register/{participantId}")]
     public async Task<IActionResult> RegisterParticipantToEventAsync(int eventId, int participantId)
     {
         await _participantService.RegisterParticipantToEventAsync(eventId, participantId);
         return Ok();
     }
-    
-    
-    //2. Получение списка участников события;
+    //2. Получение списка участников события;+
     [HttpGet("{eventId}/participants")]
     public async Task<IActionResult> GetParticipantsByEventIdAsync(int eventId)
     {
@@ -74,7 +70,7 @@ public class ParticipantsController:ControllerBase
         }
         return Ok(participants);
     }
-    //3. Получение определенного участника по его Id;
+    //3. Получение определенного участника по его Id;  +
     [HttpGet("{participantId}")]
     public async Task<IActionResult> GetParticipantByIdAsync(int participantId)
     {
@@ -85,7 +81,7 @@ public class ParticipantsController:ControllerBase
         }
         return Ok(participant);
     }
-    //4. Отмена участия пользователя в событии;
+    //4. Отмена участия пользователя в событии; +
     [HttpDelete("{eventId}/cancel/{participantId}")]
     public async Task<IActionResult> CancelRegistrationAsync(int eventId, int participantId)
     {
