@@ -36,3 +36,68 @@ ul li{list-style: none;}
 img{vertical-align: top;}
 
 h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
+//fonts
+@import 'https://fonts.googleapis.com/css2?family=Russo+One&family=Tenor+Sans&display=swap';
+
+.tenor-sans-regular { // обычный текст
+	font-family: "Tenor Sans", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+}
+.russo-one-regular { // заголовки
+	font-family: "Russo One", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+}
+
+
+body,html {
+	background-color: var(--white);
+	overflow-x: hidden;
+	--index: calc(1vw + 1vh);
+	--lightblue: #007bff;
+	--darkgray: #333;
+	--white: #f0f2f5;
+	--red: #dc3545;
+
+}
+
+h1{
+	font-family: "Russo One", sans-serif;
+	font-size: 2.5em;
+	font-weight: 400;
+	font-style:normal;
+}
+
+h2{
+	font-family: "Russo One", sans-serif;
+	font-size: 2em;
+	font-weight: 400;
+	font-style:normal;
+}
+
+a{
+	font-family: "Tenor Sans", sans-serif;
+}
+label{
+	font-family: "Tenor Sans", sans-serif;
+}
+h3{
+	font-family: "Tenor Sans", sans-serif;
+}
+h4{
+	font-family: "Tenor Sans", sans-serif;
+}
+h5{
+	font-family: "Tenor Sans", sans-serif;
+}
+h6{
+	font-family: "Tenor Sans", sans-serif;
+}
+input,textarea {
+	font-family: "Tenor Sans", sans-serif;
+	font-weight: bold;
+}
+button{
+	font-family: "Tenor Sans", sans-serif;
+}

@@ -18,22 +18,19 @@ namespace API.Middlewares
         {
             try
             {
-                await _next(context); // Передача контекста следующему middleware в конвейере
+                await _next(context);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                // Обработка исключения
                 await HandleExceptionAsync(context, ex);
             }
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            // Устанавливаем код состояния
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-            // Создаем объект ErrorDetails
             var errorDetails = new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,
@@ -41,15 +38,12 @@ namespace API.Middlewares
                 ExceptionMessage = ex.Message
             };
 
-            // Преобразуем объект ErrorDetails в строку в формате JSON
             var jsonErrorDetails = JsonSerializer.Serialize(errorDetails);
 
-            // Отправляем детали об ошибке клиенту
             await context.Response.WriteAsync(jsonErrorDetails);
         }
     }
 
-    // Модель для деталей об ошибке
     public class ErrorDetails
     {
         public int StatusCode { get; set; }

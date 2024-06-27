@@ -30,7 +30,7 @@ public class JwtService:IJwtService
 
         var securityToken = new JwtSecurityToken(
             claims:Claims,
-            expires:DateTime.Now.AddSeconds(20),
+            expires:DateTime.Now.AddMinutes(5),
             signingCredentials:signingCred
             );
         string tokenString = new JwtSecurityTokenHandler().WriteToken(securityToken);
@@ -50,14 +50,30 @@ public class JwtService:IJwtService
     public ClaimsPrincipal? GetTokenPrincipal(string token)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
-        var validation = new TokenValidationParameters
+        var validationParameters = new TokenValidationParameters
         {
-            IssuerSigningKey = securityKey,
-            ValidateLifetime = false,
-            ValidateActor = false,
             ValidateIssuer = false,
             ValidateAudience = false,
+            ValidateLifetime = true, // Validate the token expiry
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = securityKey,
+            ClockSkew = TimeSpan.Zero // Remove any allowable clock skew for testing
         };
-        return new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
+
+        try
+        {
+            var principal = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
+            return principal;
+        }
+        catch (SecurityTokenExpiredException)
+        {
+            Console.WriteLine("Token has expired.");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Token validation failed: {ex.Message}");
+            return null;
+        }
     }
 }

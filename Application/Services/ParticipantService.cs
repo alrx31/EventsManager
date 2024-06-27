@@ -31,6 +31,7 @@ public class ParticipantService:IParticipantService
         if (user.RegistrationDate == null) throw new Exception("Invalid Registration Date");
         if (string.IsNullOrEmpty(user.Email)) throw new Exception("Invalid Email");
         if (string.IsNullOrEmpty(user.Password)) throw new Exception("Invalid Password");
+        
         await _participantRepository.RegisterParticipantAsync(user);
         await _participantRepository.AddRefreshTokenField(user);
         await _unitOfWork.CompleteAsync();
@@ -82,13 +83,14 @@ public class ParticipantService:IParticipantService
         return _participantRepository.SendEmailToParticipantAsync(eventId, participantId, message);
     }
     
+    // access token
     private string GenerateJwtToken(Participant user){
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_key);
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
             Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
-            Expires = DateTime.UtcNow.AddHours(1),
+            Expires = DateTime.UtcNow.AddSeconds(10),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

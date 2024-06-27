@@ -48,7 +48,7 @@ public class AuthService:IAuthService
         var response = new LoginResponse();
         if (principal?.Identity?.Name is null) return response;
         var identityUser = await _participantRepository.getExtendedIdentityUserByEmailAsync(principal.Identity.Name);
-        if (identityUser is null || identityUser.RefreshToken != refreshTokenModel.RefreshToken || identityUser.RefreshTokenExpiryTime < DateTime.UtcNow)
+        if (identityUser is null || string.IsNullOrEmpty(identityUser.RefreshToken) || identityUser.RefreshTokenExpiryTime < DateTime.UtcNow)
             return response;
         
         response.IsLoggedIn = true;
@@ -62,8 +62,6 @@ public class AuthService:IAuthService
         await _participantRepository.UpdateRefreshTokenAsync(identityUserTokenModel);
         await _unitOfWork.CompleteAsync();
         return response;
-        
-        
     }
     
     

@@ -20,13 +20,14 @@ public class ParticipantsController:ControllerBase
         _authService = authService;
     }
     
-    [HttpPut("register")]
+    [HttpPost("register")]
     public async Task<IActionResult> RegisterParticipantAsync([FromBody] ParticipantRegisterDTO participantRegisterDTO)
     {
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
         
         await _participantService.RegisterParticipantAsync(participantRegisterDTO);
+
         return Ok();
     }
 
@@ -42,7 +43,7 @@ public class ParticipantsController:ControllerBase
     }
 
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenModel model)
+    public async Task<IActionResult> RefreshToken(RefreshTokenModel model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
