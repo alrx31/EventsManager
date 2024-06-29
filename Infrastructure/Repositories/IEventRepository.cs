@@ -1,4 +1,6 @@
-﻿using EventManagement.Application.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using EventManagement.Application.Models;
 using EventManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
@@ -7,7 +9,7 @@ namespace EventManagement.Infrastructure.Repositories
     public interface IEventRepository
     {
         // main
-        Task<IEnumerable<Event>> GetAllEventsAsync();
+        Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page);
         Task<Event> GetEventByIdAsync(int id);
         Task<Event> GetEventByNameAsync(string name);
         Task AddEventAsync(EventDTO newEvent);

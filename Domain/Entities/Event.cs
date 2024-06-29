@@ -1,4 +1,6 @@
-﻿using EventManagement.Application.Models;
+﻿using System;
+using System.Collections.Generic;
+using EventManagement.Application.Models;
 
 namespace EventManagement.Domain.Entities
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using EventManagement.Application.Models;
 
 namespace EventManagement.Domain.Entities
@@ -12,7 +13,7 @@ namespace EventManagement.Domain.Entities
         public DateTime BirthDate { get; set; }
         public DateTime RegistrationDate { get; set; }
         public string Email { get; set; }
-        public List<EventParticipant> EventParticipants { get; set; }
+        public IEnumerable<EventParticipant>? EventParticipants { get; set; }
         
         public string Password { get; set; }
         

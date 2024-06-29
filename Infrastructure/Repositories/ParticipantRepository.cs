@@ -1,4 +1,5 @@
-﻿using EventManagement.Application.Models;
+﻿using System;
+using EventManagement.Application.Models;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,5 @@
-﻿using EventManagement.Application.Models;
+﻿using System.Threading.Tasks;
+using EventManagement.Application.Models;
 
 namespace EventManagement.Application.Services;
 

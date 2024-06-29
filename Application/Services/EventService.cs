@@ -1,4 +1,7 @@
-﻿using EventManagement.Application.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using EventManagement.Application.Models;
 using EventManagement.Application.Services;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure;
@@ -18,9 +21,9 @@ public class EventService : IEventService
         _unitOfWork = unitOfWork;
     }
     
-    public async Task<IEnumerable<Event>> GetAllEventsAsync()
+    public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page)
     {
-        var events = await _eventRepository.GetAllEventsAsync();
+        var events = await _eventRepository.GetAllEventsAsync(page);
         if(events == null)
         {
             throw new Exception("No events found");

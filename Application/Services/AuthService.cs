@@ -1,4 +1,6 @@
-﻿using EventManagement.Application.Models;
+﻿using System;
+using System.Threading.Tasks;
+using EventManagement.Application.Models;
 using EventManagement.Infrastructure;
 using EventManagement.Infrastructure.Repositories;
 

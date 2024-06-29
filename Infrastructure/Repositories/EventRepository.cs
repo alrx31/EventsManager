@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -25,9 +26,21 @@ namespace EventManagement.Infrastructure.Repositories
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<IEnumerable<Event>> GetAllEventsAsync()
+        public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page)
         {
-            return await _dbContext.Events.ToListAsync();
+            var datas =  await _dbContext.Events.ToListAsync();
+            // select events from 0 to 10*page
+            return datas.Take(10 * page).Select(e => new EventRequest
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                Location = e.Location,
+                Category = e.Category,
+                Date = e.Date,
+                MaxParticipants = e.MaxParticipants,
+                ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
+            });
         }
 
         public async Task<Event> GetEventByIdAsync(int id)

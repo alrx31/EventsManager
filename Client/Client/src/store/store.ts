@@ -2,15 +2,18 @@
 import {makeAutoObservable} from "mobx";
 import AuthService from "../services/AuthService";
 import UserService from "../services/UserService";
-import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {API_URL} from "../http";
-import {Exception} from "sass";
 import {IAuthResponse} from "../models/AuthResponse";
+import EventsService from "../services/EventsService";
+import {IEvent} from "../models/Event";
 
 export default class Store {
     user = {} as IUser;
     isAuht = false;
+    isLoading = false;
+    
+    
     
     constructor() {
         makeAutoObservable(this);
@@ -24,19 +27,30 @@ export default class Store {
         this.user = user;
     }
     
+    setLoading(bool:boolean){
+        this.isLoading = bool;
+    }
+    
+    
+    
     async login(email:string,password:string){
+        this.setLoading(true)
         try{
             const response = await AuthService.login(email,password);
             console.log(response)
             localStorage.setItem('token',response.data.jwtToken);
             this.setAuth(true);
-            
+            if(response.data.userId == 0) {
+                throw 'Ошибка получения данных пользователя';
+            }
             const res = await UserService.fetchUserById(response.data.userId);
             if (res.data) this.setUser(res.data);
             else console.log('Ошибка получения данных пользователя');
             
         }catch(e:any){
             console.log(e.response?.data?.message);
+        }finally {
+            this.setLoading(false);
         }
     }
     
@@ -76,6 +90,7 @@ export default class Store {
     
     
     async checkAuth(){
+        this.setLoading(true);
         try{
             const response = await axios.post<IAuthResponse>(`${API_URL}/Participants/refresh-token`,{
                 JwtToken:localStorage.getItem('token'),
@@ -86,13 +101,16 @@ export default class Store {
             console.log(response);
             localStorage.setItem('token',response.data.jwtToken);
             this.setAuth(true);
-
+            
+            if(response.data.userId == 0) throw 'Ошибка получения данных пользователя';
             const res = await UserService.fetchUserById(response.data.userId);
             if (res.data) this.setUser(res.data);
             else console.log('Ошибка получения данных пользователя');
 
         }catch (e:any) {
             console.log(e.response?.data?.message);
+        }finally {
+            this.setLoading(false);
         }
     }
     

@@ -1,4 +1,6 @@
-﻿using EventManagement.Application.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using EventManagement.Application.Models;
 using EventManagement.Domain.Entities;
 
 namespace EventManagement.Application.Services
