@@ -1,4 +1,5 @@
-﻿using EventManagement.Domain.Entities;
+﻿using System;
+using EventManagement.Domain.Entities;
 
 namespace EventManagement.Application.Models;
 

@@ -53,6 +53,28 @@ namespace EventManagement.Infrastructure.Repositories
 
             return eventById ?? throw new InvalidOperationException("Event not found");
         }
+        
+        public async Task<EventRequest> GetEventByIdAsyncRequest(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id), "Invalid event ID");
+            }
+            var e = await _dbContext.Events.FindAsync(id);
+
+            return new EventRequest
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                Location = e.Location,
+                Category = e.Category,
+                Date = e.Date,
+                MaxParticipants = e.MaxParticipants,
+                ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
+
+            }?? throw new InvalidOperationException("Event not found");
+        }
 
         public async Task<Event> GetEventByNameAsync(string name)
         {

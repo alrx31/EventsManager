@@ -72,6 +72,11 @@
       <_ContentIncludedByDefault Remove="Shared\obj\project.assets.json" />
       <_ContentIncludedByDefault Remove="Shared\obj\project.packagespec.json" />
       <_ContentIncludedByDefault Remove="Shared\obj\Shared.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Client\obj\Client.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Client\obj\Debug\net8.0\Client.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="Client\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Client\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="API\obj\Debug\net8.0\API.sourcelink.json" />
     </ItemGroup>
 
     <ItemGroup>

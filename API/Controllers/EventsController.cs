@@ -20,7 +20,7 @@ namespace API.Controllers
             _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
         }
 
-        //1. Получение списка всех событий; 
+        //1. Получение списка всех событий; c пагинацией;+
         [HttpGet("events/{page}")]
         
         public async Task<IActionResult> GetAllEvents(int page)
@@ -35,7 +35,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEventById(int id)
         {
-            var eventById = await _eventService.GetEventByIdAsync(id);
+            var eventById = await _eventService.GetEventByIdAsyncRequest(id);
             if (eventById == null)
                 return NotFound();
 
@@ -56,7 +56,8 @@ namespace API.Controllers
         
         //4. Добавление нового события;+
 
-        [HttpPost]
+        [HttpPost("create-event")]
+        [Authorize]
         public async Task<IActionResult> AddEvent([FromForm] EventDTO newEvent)
         {
             if (!ModelState.IsValid)

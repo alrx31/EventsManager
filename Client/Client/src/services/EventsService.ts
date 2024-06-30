@@ -7,9 +7,20 @@ export default  class EventsService{
         return $api.get<AxiosResponse<IEvent>>(`/Events/events/${page}`);
     }
     static fetchEvent(id: number): Promise<AxiosResponse>{
-        return $api.get<AxiosResponse<IEvent>>(`/Events/event/${id}`);
+        return $api.get<AxiosResponse<IEvent>>(`/Events/${id}`);
     }
     static createEvent(event: IEventCreate): Promise<AxiosResponse> {
-        return $api.post<AxiosResponse<IEventCreate>>('/Events/create', event);
+        
+        const formData = new FormData();
+        formData.append("Name", event.name);
+        formData.append("Description", event.description);
+        formData.append("Date", event.date.toISOString());
+        formData.append("Location", event.location);
+        formData.append("Category", event.category);
+        formData.append("MaxParticipants", event.maxParticipants.toString());
+        formData.append("ImageData", event.imageData);
+        
+        console.log(formData)
+        return $api.post<AxiosResponse>('Events', formData);
     }
 } 

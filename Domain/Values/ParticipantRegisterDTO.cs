@@ -1,4 +1,6 @@
-﻿namespace EventManagement.Application.Models;
+﻿using System;
+
+namespace EventManagement.Application.Models;
 
 public class ParticipantRegisterDTO
 {

@@ -98,7 +98,6 @@ export default class Store {
             }, {withCredentials:true})
 
 
-            console.log(response);
             localStorage.setItem('token',response.data.jwtToken);
             this.setAuth(true);
             

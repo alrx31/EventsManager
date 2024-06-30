@@ -7,6 +7,8 @@ import {Context} from "./index";
 import {observer} from "mobx-react-lite";
 import {Waiter} from "./Components/Waiter/Waiter";
 import List from "./Components/List/List";
+import { EventMenu } from './Components/List/EventMenu';
+import {CreatePage} from "./Components/List/CreatePage";
 
 function App() {
     let history = useNavigate();
@@ -32,7 +34,8 @@ function App() {
     if(store.isLoading){
         return <Waiter/>
     }
-    
+
+
     
     
     
@@ -40,12 +43,13 @@ function App() {
       
     <div className="App">
         
-        <List />
     
       <Routes>
          <Route path={"/login"}  element={<Login/>} />
-          <Route path={"/register"} element={<Register />}/>
-
+              <Route path={"/"} element={<List />} />
+              <Route path={"/register"} element={<Register />} />
+              <Route path={"/event/:EventId"} element={<EventMenu />} />
+              <Route path={"/create-event"} element={<CreatePage />} />
       </Routes>
     </div>
   );

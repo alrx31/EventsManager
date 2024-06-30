@@ -41,6 +41,16 @@ public class EventService : IEventService
         return eventById;
     }
     
+    public async Task<EventRequest> GetEventByIdAsyncRequest(int id)
+    {
+        var eventById = await _eventRepository.GetEventByIdAsyncRequest(id);
+        if(eventById == null)
+        {
+            throw new Exception("Event not found");
+        }
+        return eventById;
+    }
+    
     public async Task<Event> GetEventByNameAsync(string name)
     {
         var eventByName = await _eventRepository.GetEventByNameAsync(name);

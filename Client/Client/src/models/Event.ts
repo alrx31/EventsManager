@@ -12,9 +12,9 @@
 export interface IEventCreate {
     name: string;
     description: string;
-    dateTime: Date;
+    date: Date;
     location: string;
     category: string;
     maxParticipants: number;
-    imageSrc: string;
+    imageData: File;
 }

@@ -11,6 +11,7 @@ namespace EventManagement.Infrastructure.Repositories
         // main
         Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page);
         Task<Event> GetEventByIdAsync(int id);
+        Task<EventRequest> GetEventByIdAsyncRequest(int id);
         Task<Event> GetEventByNameAsync(string name);
         Task AddEventAsync(EventDTO newEvent);
         Task UpdateEventAsync(int eventId,EventDTO updatedEvent);

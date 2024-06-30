@@ -41,9 +41,7 @@ const List: React.FC<ListProps> = (
     useEffect(() => {
         getEvents();
     }, []);
-    useEffect(() => {
-        console.log(events)
-    }, [events]);
+    
     
     
     
@@ -51,10 +49,19 @@ const List: React.FC<ListProps> = (
     return (
         <div className={"list-page"}>
             
+            <div className="List-bar">
+                <button
+                    className={"create-event"}
+                    onClick={() => history('/create-event')}
+                >Создать мероприятие</button>
+            </div>
+            
             <div className="list">
                 {events.length > 0 &&
                     events.map((event, index) => (
-                        <div key={index} className="list-item">
+                        <div key={index} className="list-item"
+                            onClick={() => history(`/event/${event.id}`)}
+                        >
                             <p>{event.id}</p>
                             <div className="list-item__image">
                                 <img src={event.imageSrc} alt=""/>
