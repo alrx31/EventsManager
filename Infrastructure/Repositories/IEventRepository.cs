@@ -17,12 +17,7 @@ namespace EventManagement.Infrastructure.Repositories
         Task UpdateEventAsync(int eventId,EventDTO updatedEvent);
         Task DeleteEventAsync(int id);
         Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria);
-        
-        // another
-        /*Task AddParticipantToEventAsync(int eventId, Participant participant);
-        Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(int eventId);
-        Task<Participant> GetParticipantByIdAsync(int id);
-        Task RemoveParticipantFromEventAsync(int eventId, int participantId);*/
+        Task<List<EventRequest>> getEventsByUserId(int id);
 
     }
 }

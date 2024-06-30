@@ -1,10 +1,10 @@
 ﻿export interface IUser{
-    Id:number;
-    FirstName:string;
-    LastName:string;
-    Email:string;
-    BirthDate:Date;
-    RegisterationDate:Date;
+    id:number;
+    firstName:string;
+    lastName:string;
+    email:string;
+    birthDate:Date;
+    registerationDate:Date;
 }
 export interface IUserLogin extends IUser{
     Password:string;

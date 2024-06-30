@@ -220,8 +220,23 @@ namespace EventManagement.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
-        
-        
+
+        public async Task<List<EventRequest>> getEventsByUserId(int id)
+        {
+            if (id < 1) throw new Exception("invalid Id");
+            return  await _dbContext.Events.Where(e => e.EventParticipants.Any(ep => ep.ParticipantId == id))
+                .Select(e => new EventRequest
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Description = e.Description,
+                    Location = e.Location,
+                    Category = e.Category,
+                    Date = e.Date,
+                    MaxParticipants = e.MaxParticipants,
+                    ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
+                }).ToListAsync();
+        }
         
         private async Task<int> GetLastEventId()
         {

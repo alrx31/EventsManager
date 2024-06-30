@@ -23,4 +23,8 @@ export default  class EventsService{
         console.log(formData)
         return $api.post<AxiosResponse>('/Events/create-event', formData);
     }
+    
+    static getEvetnsByUserId(id:number):Promise<AxiosResponse>{
+        return $api.get<AxiosResponse<IEvent[]>>(`/Events/user-events/${id}`);
+    }
 } 

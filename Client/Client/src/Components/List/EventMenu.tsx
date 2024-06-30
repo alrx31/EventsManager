@@ -17,6 +17,7 @@ const EventMenu:React.FC<IEventMenuProps> = (
     let {EventId} = useParams();
     let [Event,setEvent] = React.useState<IEvent|undefined>(undefined);
     let [isLoad,setIsLoad] = React.useState(false);
+    let [isParticipant,setIsParticipant] = React.useState(false);
     let history = useNavigate();
     let {store} = useContext(Context)
 
@@ -34,6 +35,8 @@ const EventMenu:React.FC<IEventMenuProps> = (
             }).finally(() => {
                 setIsLoad(false);
             });
+        
+        
     },[EventId])
     
     if(isLoad){
@@ -44,8 +47,8 @@ const EventMenu:React.FC<IEventMenuProps> = (
     let handleWrite = async ()=> {
         if (store.user !== null && Event !== null) {
             setIsLoad(true)
-            console.log(EventId,store.user.Id)
-            await ParticipantService.CreteParticipant(Number(EventId), store.user.Id)
+            console.log(EventId,store.user.id)
+            await ParticipantService.CreteParticipant(Number(EventId), store.user.id)
                 .then((response) => {
                     if (response.status === 200) {
                         alert("Вы успешно записались на мероприятие")

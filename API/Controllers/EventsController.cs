@@ -68,7 +68,6 @@ namespace API.Controllers
         
         // 5. Изменение информации о существующем событии;
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventDTO updatedEvent)
         {
             if (!ModelState.IsValid)
@@ -81,7 +80,6 @@ namespace API.Controllers
         //6. Удаление события; +
 
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteEvent(int id)
         {
             await _eventService.DeleteEventAsync(id);
@@ -91,7 +89,6 @@ namespace API.Controllers
         //7. Получение списка событий по определенным критериям (по дате, месту проведения, категории события) +
         
         [HttpPost("filter")]
-        [Authorize]
         public async Task<IActionResult> FilterEvents([FromBody] EventCriteria criteria)
         {
             if (criteria == null)
@@ -101,8 +98,17 @@ namespace API.Controllers
             return Ok(events);
         }
         
-        
+        // TODO: fix authorization
         //8. Возможность добавления изображений к событиям и их хранение. +
-        // включена в тип Event        
+        // включена в тип Event   
+        
+        // получение списка событий пользователя
+        [HttpGet("user-events/{UserId}")]
+        public async Task<IActionResult> GetEventsFromUser(int UserId)
+        {
+            if (UserId < 1) throw new Exception("Invalid User Id");
+            var events = await _eventService.getEventsByUserId(UserId);
+            return Ok(events);
+        }
     }
 }

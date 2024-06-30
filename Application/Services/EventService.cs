@@ -111,6 +111,10 @@ public class EventService : IEventService
         }
         return await _eventRepository.GetEventsByCriteriaAsync(criteria);
     }
-    
-    
+
+    public async Task<List<EventRequest>> getEventsByUserId(int id)
+    {
+        if (id < 1) throw new Exception("Invalid Id");
+        return await _eventRepository.getEventsByUserId(id);
+    }
 }

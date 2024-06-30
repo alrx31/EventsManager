@@ -95,21 +95,19 @@ export default class Store {
                 JwtToken: localStorage.getItem('token'),
                 RefreshToken: ""
             }, {withCredentials: true})
-            console.log(response)
 
             localStorage.setItem('token', response.data.jwtToken);
             if (response.data.userId === 0) throw 'Ошибка получения данных пользователя';
             this.setAuth(true);
             
             const res = await UserService.fetchUserById(response.data.userId);
-            console.log(res)
             if (res.data) this.setUser({
-                Id: res.data.id,
-                FirstName: res.data.firstName,
-                LastName: res.data.lastName,
-                Email: res.data.email,
-                BirthDate: res.data.birthDate,
-                RegisterationDate: res.data.registerationDate
+                id: res.data.id,
+                firstName: res.data.firstName,
+                lastName: res.data.lastName,
+                email: res.data.email,
+                birthDate: res.data.birthDate,
+                registerationDate: res.data.registerationDate
             });
             else console.log('Ошибка получения данных пользователя');
 

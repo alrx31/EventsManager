@@ -54,6 +54,12 @@ const List: React.FC<ListProps> = (
                     className={"create-event"}
                     onClick={() => history('/create-event')}
                 >Создать мероприятие</button>
+                <button
+                    className={"create-event"}
+                    onClickCapture={()=>{
+                        history(`/user/${store.user.id}`)
+                    }}
+                >Плофиль</button>
             </div>
             
             <div className="list">

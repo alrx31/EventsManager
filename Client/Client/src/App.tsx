@@ -9,6 +9,7 @@ import {Waiter} from "./Components/Waiter/Waiter";
 import List from "./Components/List/List";
 import EventMenu from './Components/List/EventMenu';
 import {CreatePage} from "./Components/List/CreatePage";
+import {Profile} from "./Components/Profile/Profile";
 
 function App() {
     let history = useNavigate();
@@ -43,6 +44,7 @@ function App() {
       
     <div className="App">
         
+        
     
       <Routes>
          <Route path={"/login"}  element={<Login/>} />
@@ -50,6 +52,7 @@ function App() {
               <Route path={"/register"} element={<Register />} />
               <Route path={"/event/:EventId"} element={<EventMenu />} />
               <Route path={"/create-event"} element={<CreatePage />} />
+                <Route path={"/user/:UserId"} element={<Profile />} />
       </Routes>
     </div>
   );
