@@ -32,7 +32,7 @@ export const CreatePage:React.FC<CreatePageProps> = (
         setIsLoad(true);
         EventsService.createEvent(event)
             .then((response) => {
-                if (response.status === 201) {
+                if (response.status === 200) {
                     alert("Мероприятие создано")
                     history('/');
                 } else {

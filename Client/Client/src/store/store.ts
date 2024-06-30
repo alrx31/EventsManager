@@ -12,56 +12,55 @@ export default class Store {
     user = {} as IUser;
     isAuht = false;
     isLoading = false;
-    
-    
-    
+
+
     constructor() {
         makeAutoObservable(this);
     }
-    
-    setAuth(bool:boolean){
+
+    setAuth(bool: boolean) {
         this.isAuht = bool;
     }
-    
-    setUser(user:IUser){
+
+    setUser(user: IUser) {
         this.user = user;
     }
-    
-    setLoading(bool:boolean){
+
+
+    setLoading(bool: boolean) {
         this.isLoading = bool;
     }
-    
-    
-    
-    async login(email:string,password:string){
+
+
+    async login(email: string, password: string) {
         this.setLoading(true)
-        try{
-            const response = await AuthService.login(email,password);
+        try {
+            const response = await AuthService.login(email, password);
             console.log(response)
-            localStorage.setItem('token',response.data.jwtToken);
+            localStorage.setItem('token', response.data.jwtToken);
             this.setAuth(true);
-            if(response.data.userId == 0) {
+            if (response.data.userId == 0) {
                 throw 'Ошибка получения данных пользователя';
             }
             const res = await UserService.fetchUserById(response.data.userId);
             if (res.data) this.setUser(res.data);
             else console.log('Ошибка получения данных пользователя');
-            
-        }catch(e:any){
+
+        } catch (e: any) {
             console.log(e.response?.data?.message);
-        }finally {
+        } finally {
             this.setLoading(false);
         }
     }
-    
+
     async registration(
-        email:string,
-        password:string,
-        firstName:string,
-        lastName:string,
-        BirthDate:Date
-    ){
-        try{
+        email: string,
+        password: string,
+        firstName: string,
+        lastName: string,
+        BirthDate: Date
+    ) {
+        try {
             const response = await AuthService.register(
                 email,
                 password,
@@ -69,48 +68,55 @@ export default class Store {
                 lastName,
                 BirthDate
             );
-            if(response.status === 200) {
+            if (response.status === 200) {
                 alert('Успешная регистрация');
             }
-        }catch(e:any){
+        } catch (e: any) {
             console.log(e.response?.data?.message);
         }
     }
 
-    async logout(){
-        try{
+    async logout() {
+        try {
             const response = await AuthService.logout();
             localStorage.removeItem('token');
             this.setAuth(false);
             this.setUser({} as IUser);
-        }catch(e:any){
+        } catch (e: any) {
             console.log(e.response?.data?.message);
         }
     }
-    
-    
-    async checkAuth(){
+
+
+    async checkAuth() {
         this.setLoading(true);
-        try{
-            const response = await axios.post<IAuthResponse>(`${API_URL}/Participants/refresh-token`,{
-                JwtToken:localStorage.getItem('token'),
-                RefreshToken:""
-            }, {withCredentials:true})
+        try {
+            const response = await axios.post<IAuthResponse>(`${API_URL}/Participants/refresh-token`, {
+                JwtToken: localStorage.getItem('token'),
+                RefreshToken: ""
+            }, {withCredentials: true})
+            console.log(response)
 
-
-            localStorage.setItem('token',response.data.jwtToken);
+            localStorage.setItem('token', response.data.jwtToken);
+            if (response.data.userId === 0) throw 'Ошибка получения данных пользователя';
             this.setAuth(true);
             
-            if(response.data.userId == 0) throw 'Ошибка получения данных пользователя';
             const res = await UserService.fetchUserById(response.data.userId);
-            if (res.data) this.setUser(res.data);
+            console.log(res)
+            if (res.data) this.setUser({
+                Id: res.data.id,
+                FirstName: res.data.firstName,
+                LastName: res.data.lastName,
+                Email: res.data.email,
+                BirthDate: res.data.birthDate,
+                RegisterationDate: res.data.registerationDate
+            });
             else console.log('Ошибка получения данных пользователя');
 
-        }catch (e:any) {
-            console.log(e.response?.data?.message);
-        }finally {
+        } catch (e: any) {
+            console.log(e?.response?.data?.message);
+        } finally {
             this.setLoading(false);
         }
     }
-    
 }

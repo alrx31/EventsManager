@@ -1,21 +1,26 @@
-﻿import React from 'react';
+﻿import React, {useContext, useEffect} from 'react';
 import './TestMenu.scss';
 import {useNavigate, useParams} from "react-router-dom";
 import { IEvent } from '../../models/Event';
 import EventsService from '../../services/EventsService';
 import {Waiter} from "../Waiter/Waiter";
+import {Context} from "../../index";
+import ParticipantService from "../../services/ParticipantService";
 interface IEventMenuProps {
 }
-export const EventMenu:React.FC<IEventMenuProps> = (
+const EventMenu:React.FC<IEventMenuProps> = (
     {
     }
 ) => {
+    
+    
     let {EventId} = useParams();
     let [Event,setEvent] = React.useState<IEvent|undefined>(undefined);
     let [isLoad,setIsLoad] = React.useState(false);
     let history = useNavigate();
-    
-    React.useEffect(()=>{
+    let {store} = useContext(Context)
+
+    useEffect(()=>{
         setIsLoad(true);
         EventsService.fetchEvent(Number(EventId))
             .then((response) => {
@@ -31,11 +36,33 @@ export const EventMenu:React.FC<IEventMenuProps> = (
             });
     },[EventId])
     
-if(isLoad){
+    if(isLoad){
         return <Waiter/> 
     }
-        
     
+        
+    let handleWrite = async ()=> {
+        if (store.user !== null && Event !== null) {
+            setIsLoad(true)
+            console.log(EventId,store.user.Id)
+            await ParticipantService.CreteParticipant(Number(EventId), store.user.Id)
+                .then((response) => {
+                    if (response.status === 200) {
+                        alert("Вы успешно записались на мероприятие")
+                        history("/");
+                    } else {
+                        throw "Ошибка записи на мероприятие"
+                    }
+                }).catch((e: any) => {
+                    alert("Ошибка записи на мероприятие")
+                    console.log(e.response?.data?.message)
+            }).finally(()=>{
+                setIsLoad(false)
+            })
+        }else{
+            console.log("store.user или Event равны null", store.user, Event);
+        }
+    }
     
     
     return (
@@ -55,10 +82,15 @@ if(isLoad){
 
                 <div className="event-controll">
                     
-                    <button
+                    {/*<button
                         className={"edit-event"}
                         onClick={() => history(`/update/${Event?.id}`)}
-                    >Редактировать</button>
+                    >Редактировать</button>*/}
+                    
+                    <button 
+                        className={"event-register"}
+                        onClick={handleWrite}
+                    >Записаться </button>
                     
                     <button
                         className={"event-back"}
@@ -68,5 +100,6 @@ if(isLoad){
                 
             </div>
         </div>
-    );
+    )
 };
+export default EventMenu;

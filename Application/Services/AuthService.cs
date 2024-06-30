@@ -52,7 +52,7 @@ public class AuthService:IAuthService
         var identityUser = await _participantRepository.getExtendedIdentityUserByEmailAsync(principal.Identity.Name);
         if (identityUser is null || string.IsNullOrEmpty(identityUser.RefreshToken) || identityUser.RefreshTokenExpiryTime < DateTime.UtcNow)
             return response;
-        
+        response.UserId = identityUser.Id;
         response.IsLoggedIn = true;
         response.JwtToken = _jwtService.GenerateJwtToken(identityUser.Email);
         response.RefreshToken = _jwtService.GenerateRefreshToken();
