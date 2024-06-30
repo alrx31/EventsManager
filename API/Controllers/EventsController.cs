@@ -57,7 +57,6 @@ namespace API.Controllers
         //4. Добавление нового события;+
 
         [HttpPost("create-event")]
-        [Authorize]
         public async Task<IActionResult> AddEvent([FromForm] EventDTO newEvent)
         {
             if (!ModelState.IsValid)

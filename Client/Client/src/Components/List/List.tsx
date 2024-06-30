@@ -57,7 +57,8 @@ const List: React.FC<ListProps> = (
             </div>
             
             <div className="list">
-                {events.length > 0 &&
+                
+                {events.length > 0 ?
                     events.map((event, index) => (
                         <div key={index} className="list-item"
                             onClick={() => history(`/event/${event.id}`)}
@@ -74,7 +75,10 @@ const List: React.FC<ListProps> = (
                                     Описание:<p>{event.description}</p>
                                 </div>
                                 <div className="list-item__info__location">
-                                    Положение:<p>{event.location}</p>
+                                    Локация:<p>{event.location}</p>
+                                </div>
+                                <div className="list-item__info__date">
+                                    Дата:<p>{event?.date?.toString()}</p>
                                 </div>
                                 <div className="list-item__info__category">
                                     Категория:<p>{event.category}</p>
@@ -84,10 +88,12 @@ const List: React.FC<ListProps> = (
                                 </div>
                             </div>
                         </div>
-                    ))
+                    )) : (
+                        <h1>Мероприятий нет</h1>
+                    )
                 
                 }
-                {events.length && <button onClick={getEvents}>Загрузить еще</button>}
+                {events.length > 0 && <button onClick={getEvents}>Загрузить еще</button>}
             </div>
 
         </div>

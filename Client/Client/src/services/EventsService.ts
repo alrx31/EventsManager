@@ -21,6 +21,6 @@ export default  class EventsService{
         formData.append("ImageData", event.imageData);
         
         console.log(formData)
-        return $api.post<AxiosResponse>('Events', formData);
+        return $api.post<AxiosResponse>('/Events/create-event', formData);
     }
 } 

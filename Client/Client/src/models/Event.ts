@@ -2,7 +2,7 @@
     id:number;
     name:string;
     description:string;
-    dateTime:Date;
+    date:Date;
     location:string;
     category:string;
     maxParticipants:number;

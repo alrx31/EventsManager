@@ -21,7 +21,6 @@ export const EventMenu:React.FC<IEventMenuProps> = (
             .then((response) => {
                 if (response.status === 200) {
                     setEvent(response.data);
-                    console.log(response.data)
                 } else {
                     throw 'Ошибка получения данных';
                 }
@@ -49,6 +48,7 @@ if(isLoad){
                 <h2>Название: {Event?.name}</h2>
                 <h2>Описание: {Event?.description}</h2>
                 <h2>Место проведения: {Event?.location}</h2>
+                <h2>Дата проведения: {Event?.date?.toString()}</h2>
                 <h2>Категория: {Event?.category}</h2>
                 <h2>Максимальное количество участников: {Event?.maxParticipants}</h2>
 

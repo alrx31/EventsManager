@@ -24,7 +24,7 @@ const Login = (
             <h2>Войти</h2>
             <form onSubmit={handleSubmit} className={"login-form"}>
                 <div className="form-group">
-                    <label htmlFor="login">Логин</label>
+                    <label htmlFor="login">Почта</label>
                     <input
                         type="text"
                         id="login"
