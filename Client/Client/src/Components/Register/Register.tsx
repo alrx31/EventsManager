@@ -2,8 +2,9 @@
 import "./Register.scss"
 import Store from "../../store/store";
 import {Context} from "../../index";
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {observer} from "mobx-react-lite";
+import React from "react";
 const Register = (
     
 ) => {
@@ -81,7 +82,7 @@ const Register = (
                     />
                 </div>
                 <button type="submit" className="login-button">Зарегистрироваться</button>
-                
+                <NavLink to={"/login"}>Уже есть аккаунт?</NavLink>
             </form>
         </div>
     )

@@ -36,7 +36,6 @@ export default class Store {
         this.setLoading(true)
         try {
             const response = await AuthService.login(email, password);
-            console.log(response)
             localStorage.setItem('token', response.data.jwtToken);
             this.setAuth(true);
             if (response.data.userId == 0) {
@@ -78,7 +77,7 @@ export default class Store {
 
     async logout() {
         try {
-            const response = await AuthService.logout();
+            const response = await AuthService.logout(this.user.id);
             localStorage.removeItem('token');
             this.setAuth(false);
             this.setUser({} as IUser);
@@ -107,7 +106,7 @@ export default class Store {
                 lastName: res.data.lastName,
                 email: res.data.email,
                 birthDate: res.data.birthDate,
-                registerationDate: res.data.registerationDate
+                registrationDate: res.data.registrationDate
             });
             else console.log('Ошибка получения данных пользователя');
 

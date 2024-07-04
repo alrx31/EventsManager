@@ -4,7 +4,7 @@
     lastName:string;
     email:string;
     birthDate:Date;
-    registerationDate:Date;
+    registrationDate:Date;
 }
 export interface IUserLogin extends IUser{
     Password:string;

@@ -44,7 +44,7 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task<Participant> GetParticipantByIdAsync(int id)
         {
-            return await _context.Participants.FindAsync(id);
+            return await _context.Participants.FirstOrDefaultAsync(p => p.Id ==id);
         }
 
         public async Task CancelRegistrationAsync(int eventId, int participantId)
@@ -154,6 +154,16 @@ namespace EventManagement.Infrastructure.Repositories
                 Participant = null
             };
             await _context.ExtendedIdentityUsers.AddAsync(newToken);
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task CanselRefreshToken(int userId)
+        {
+            var user = await _context.ExtendedIdentityUsers
+                .FirstOrDefaultAsync(u => u.ParticipantId == userId);
+            if (user != null) user.RefreshTokenExpiryTime = DateTime.UtcNow;
+            else throw new Exception("User Not Found");
             await _context.SaveChangesAsync();
         }
 

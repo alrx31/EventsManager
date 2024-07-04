@@ -11,6 +11,7 @@
   justify-content: center;
   align-items: center;
   padding: 10%;
+  overflow-y: auto;
   .EventInfo {
     width: 60%;
     min-height:70%;
@@ -58,8 +59,11 @@
                 background-color: var(--white);
               color: var(--lightblue);
             }
+          &:disabled{
+            background-color: var(--darkgray);
+          }
         }
-      .event-back{
+      .event-delete,.event-back{
         width: 100px;
         height: 40px;
         background-color: var(--red);
@@ -73,6 +77,7 @@
           background-color: var(--white);
           color: var(--red);
         }
+        
       }
         
     }

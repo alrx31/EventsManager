@@ -25,5 +25,6 @@ public interface IParticipantRepository
     Task<ExtendedIdentityUser> getExtendedIdentityUserByEmailAsync(string email);
     Task UpdateRefreshTokenAsync(ExtendedIdentityUser user);
     Task AddRefreshTokenField(ParticipantRegisterDTO user);
-    
+
+    Task CanselRefreshToken(int userId);
 }

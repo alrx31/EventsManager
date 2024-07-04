@@ -1,6 +1,6 @@
 ﻿import React, {useContext, useEffect} from 'react';
 import './List.scss';
-import {NavLink, Route, Routes, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Context} from "../../index";
 import {IEvent} from "../../models/Event";
 import {observer} from "mobx-react-lite";
@@ -54,20 +54,31 @@ const List: React.FC<ListProps> = (
                     className={"create-event"}
                     onClick={() => history('/create-event')}
                 >Создать мероприятие</button>
-                <button
-                    className={"create-event"}
-                    onClickCapture={()=>{
-                        history(`/user/${store.user.id}`)
-                    }}
-                >Плофиль</button>
+                <div>
+                    <button
+                        className={"create-event"}
+                        onClick={() => {
+                            history(`/user/${store.user.id}`)
+                        }}
+                    >Профиль
+                    </button>
+                    <button
+                        className={"user-logout"}
+                        onClick={() => {
+                               store.logout();
+                               history('/login')
+                        }}
+                    >Выйти
+                    </button>
+                </div>
             </div>
-            
+
             <div className="list">
-                
+
                 {events.length > 0 ?
                     events.map((event, index) => (
                         <div key={index} className="list-item"
-                            onClick={() => history(`/event/${event.id}`)}
+                             onClick={() => history(`/event/${event.id}`)}
                         >
                             <p>{event.id}</p>
                             <div className="list-item__image">

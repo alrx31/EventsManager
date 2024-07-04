@@ -22,7 +22,7 @@
         
         
         
-        .create-event {
+        .user-logout,.create-event {
             background-color: var(--lightblue);
             color: white;
             border-radius: 50px;
@@ -32,6 +32,7 @@
             font-weight: bold;
             transition: 0.3s;
             border: 1px solid transparent;
+            margin: 0 16px;
             &:focus {
                 outline: none;
                 border: 1px solid var(--darkgray);
@@ -40,6 +41,14 @@
                 background-color: white;
                 color: var(--lightblue);
                 border: 1px solid var(--lightblue);
+            }
+        }
+        .user-logout{
+            background-color: var(--red);
+            &:hover {
+                background-color: white;
+                color: var(--red);
+                border: 1px solid var(--red);
             }
         }
         input {

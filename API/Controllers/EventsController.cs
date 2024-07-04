@@ -98,7 +98,6 @@ namespace API.Controllers
             return Ok(events);
         }
         
-        // TODO: fix authorization
         //8. Возможность добавления изображений к событиям и их хранение. +
         // включена в тип Event   
         
@@ -110,5 +109,7 @@ namespace API.Controllers
             var events = await _eventService.getEventsByUserId(UserId);
             return Ok(events);
         }
+        
+        
     }
 }

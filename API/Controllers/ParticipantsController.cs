@@ -53,6 +53,20 @@ public class ParticipantsController:ControllerBase
         return Unauthorized();
     }
 
+    
+    
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout([FromBody] LogoutModel model)
+    {
+        if(!ModelState.IsValid)
+            return BadRequest(ModelState);
+        if(model.UserId == 0 || string.IsNullOrEmpty(model.Token))
+            return BadRequest("Invalid token or user id");
+        await _authService.Logout(model);
+        return Ok();
+    }
+    
+
     //1. Регистрация участия пользователя в событии;+
     [HttpPut("{eventId}/register/{participantId}")]
     public async Task<IActionResult> RegisterParticipantToEventAsync(int eventId, int participantId)

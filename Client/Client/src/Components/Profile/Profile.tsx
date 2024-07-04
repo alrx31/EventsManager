@@ -54,8 +54,7 @@ export const Profile:React.FC<IProfileProps> = ({
         try{
             await EventsService.getEvetnsByUserId(UserId)
                 .then((response)=>{
-                    console.log(response.data);
-                    if(response.status === 200){
+                        if(response.status === 200){
                         setEvents(response.data);
                     }else{
                         throw 'Ошибка получения данных';
@@ -89,7 +88,7 @@ export const Profile:React.FC<IProfileProps> = ({
 
                 <div className="profile-info-row">
                     <span>Дата регистрации:</span>
-                    <span>{user?.registerationDate?.toString()}</span>
+                    <span>{user?.registrationDate?.toString()}</span>
                 </div>
 
                 <div className="profile-info-row">

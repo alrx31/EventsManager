@@ -27,4 +27,13 @@ export default  class EventsService{
     static getEvetnsByUserId(id:number):Promise<AxiosResponse>{
         return $api.get<AxiosResponse<IEvent[]>>(`/Events/user-events/${id}`);
     }
+    
+    static deleteEventParticipant(eventId:number, userId:number):Promise<AxiosResponse>{
+        return $api.delete<AxiosResponse>(`/Participants/${eventId}/cancel/${userId}`);
+    }
+    
+    static getParticipants(eventId:number):Promise<AxiosResponse>{
+        return $api.get<AxiosResponse>(`/Participants/${eventId}/participants`);
+    }
+    
 } 

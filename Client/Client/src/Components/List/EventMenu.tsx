@@ -1,6 +1,6 @@
 ﻿import React, {useContext, useEffect} from 'react';
 import './TestMenu.scss';
-import {useNavigate, useParams} from "react-router-dom";
+import {Await, useNavigate, useParams} from "react-router-dom";
 import { IEvent } from '../../models/Event';
 import EventsService from '../../services/EventsService';
 import {Waiter} from "../Waiter/Waiter";
@@ -20,9 +20,11 @@ const EventMenu:React.FC<IEventMenuProps> = (
     let [isParticipant,setIsParticipant] = React.useState(false);
     let history = useNavigate();
     let {store} = useContext(Context)
+    let [isFull, setIsFull] = React.useState(true);
 
     useEffect(()=>{
         setIsLoad(true);
+        
         EventsService.fetchEvent(Number(EventId))
             .then((response) => {
                 if (response.status === 200) {
@@ -32,22 +34,38 @@ const EventMenu:React.FC<IEventMenuProps> = (
                 }
             }).catch((e: any) => {
                 console.log(e.response?.data?.message);
-            }).finally(() => {
-                setIsLoad(false);
-            });
-        
-        
+            })
+        getParticipants();
+        checkParticipant();
     },[EventId])
+
     
     if(isLoad){
         return <Waiter/> 
+    }
+    let checkParticipant = async ()=>{
+        await EventsService.getEvetnsByUserId(store.user.id)
+            .then((response)=>{
+                if(response.status === 200){
+                    let events = response.data;
+                    let event = events.find((event:IEvent)=>event.id === Number(EventId));
+                    if(event !== undefined){
+                        setIsParticipant(true);
+                    }
+                }else{
+                    throw 'Ошибка получения данных';
+                }
+            }).catch((e:any)=>{
+                console.log(e.response?.data?.message);
+            }).finally(()=>{
+                setIsLoad(false);
+            })
     }
     
         
     let handleWrite = async ()=> {
         if (store.user !== null && Event !== null) {
             setIsLoad(true)
-            console.log(EventId,store.user.id)
             await ParticipantService.CreteParticipant(Number(EventId), store.user.id)
                 .then((response) => {
                     if (response.status === 200) {
@@ -66,7 +84,40 @@ const EventMenu:React.FC<IEventMenuProps> = (
             console.log("store.user или Event равны null", store.user, Event);
         }
     }
+    let handleDelete =async ()=>{
+        setIsLoad(true);
+        await EventsService.deleteEventParticipant(Number(EventId),store.user.id)
+            .then((response)=>{
+                if(response.status === 200){
+                    alert("Вы успешно отписались от мероприятия");
+                    history("/");
+                }
+                else{
+                    throw "Ошибка отписки от мероприятия";
+                }
+            }).catch((e:any)=> {
+            alert("Ошибка отписки от мероприятия");
+            console.log(e.response?.data?.message);
+        })
+            .finally(()=>{
+                setIsLoad(false);
+            })
+    }
     
+    let getParticipants = async ()=>{
+        await EventsService.getParticipants(Number(EventId))
+            .then((response)=>{
+                if(response.status === 200){
+                    let participants = response.data;
+                    if(Event?.maxParticipants && participants.length < Event?.maxParticipants){
+                        setIsFull(false);
+                    }
+                }
+            }).catch((e:any)=>{
+                console.log(e.response?.data?.message);
+                alert("Ошибка получения данных, на мероприятие записаться не получится");
+            })
+    }
     
     return (
         <div className={"EventMenu"}>
@@ -81,7 +132,8 @@ const EventMenu:React.FC<IEventMenuProps> = (
                 <h2>Дата проведения: {Event?.date?.toString()}</h2>
                 <h2>Категория: {Event?.category}</h2>
                 <h2>Максимальное количество участников: {Event?.maxParticipants}</h2>
-
+                {(isFull && <h2>мест нет</h2>)}
+                
 
                 <div className="event-controll">
                     
@@ -89,12 +141,21 @@ const EventMenu:React.FC<IEventMenuProps> = (
                         className={"edit-event"}
                         onClick={() => history(`/update/${Event?.id}`)}
                     >Редактировать</button>*/}
-                    
-                    <button 
-                        className={"event-register"}
-                        onClick={handleWrite}
-                    >Записаться </button>
-                    
+
+                    {!isParticipant ? (
+
+                        <button
+                            className={"event-register"}
+                            onClick={handleWrite}
+                            disabled={isFull}
+                        >Записаться </button>
+                    ) : (
+                        <button
+                            className={"event-delete"}
+                            onClick={handleDelete}
+                        >Отписаться </button>
+                    )}
+
                     <button
                         className={"event-back"}
                         onClick={() => history("/")}
