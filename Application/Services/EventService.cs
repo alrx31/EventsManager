@@ -21,9 +21,9 @@ public class EventService : IEventService
         _unitOfWork = unitOfWork;
     }
     
-    public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page)
+    public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page,int pageSize)
     {
-        var events = await _eventRepository.GetAllEventsAsync(page);
+        var events = await _eventRepository.GetAllEventsAsync(page,pageSize);
         if(events == null)
         {
             throw new Exception("No events found");
@@ -116,5 +116,21 @@ public class EventService : IEventService
     {
         if (id < 1) throw new Exception("Invalid Id");
         return await _eventRepository.getEventsByUserId(id);
+    }
+
+    public async Task<List<EventRequest>> SearchEvents(SearchDTO model,int page, int pageSize)
+    {
+        if(model.Date == null && string.IsNullOrEmpty(model.Name))
+        {
+            throw new Exception("Date or Name is required");
+        }
+        
+        return await _eventRepository.SearchEvents(model,page,pageSize);
+        
+    }
+
+    public async Task<int> GetCountEvents()
+    {
+        return await _eventRepository.GetCountEvents();
     }
 }

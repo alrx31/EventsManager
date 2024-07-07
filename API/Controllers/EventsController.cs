@@ -21,16 +21,21 @@ namespace API.Controllers
         }
 
         //1. Получение списка всех событий; c пагинацией;+
-        [HttpGet("events/{page}")]
-        
-        public async Task<IActionResult> GetAllEvents(int page)
+        [HttpGet("page={page}&pageSize={pageSize}")]
+
+        public async Task<IActionResult> GetAllEvents([FromRoute] int page,int pageSize)
         {
-            var events = await _eventService.GetAllEventsAsync(page);
+            if (page < 1 || pageSize < 1)
+            {
+                return BadRequest();
+            }
+            var events = await _eventService.GetAllEventsAsync(page,pageSize);
             if (events == null)
                 return NotFound();
 
             return Ok(events);
         }
+
         //2. Получение определенного события по его Id;+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEventById(int id)
@@ -41,7 +46,7 @@ namespace API.Controllers
 
             return Ok(eventById);
         }
-        
+
         //3. Получение события по его названию; +
 
         [HttpGet("event/{name}")]
@@ -53,7 +58,7 @@ namespace API.Controllers
 
             return Ok(eventByName);
         }
-        
+
         //4. Добавление нового события;+
 
         [HttpPost("create-event")]
@@ -65,7 +70,7 @@ namespace API.Controllers
             await _eventService.AddEventAsync(newEvent);
             return Ok();
         }
-        
+
         // 5. Изменение информации о существующем событии;
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventDTO updatedEvent)
@@ -73,10 +78,10 @@ namespace API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _eventService.UpdateEventAsync(id,updatedEvent);
+            await _eventService.UpdateEventAsync(id, updatedEvent);
             return Ok();
         }
-        
+
         //6. Удаление события; +
 
         [HttpDelete("{id}")]
@@ -87,7 +92,7 @@ namespace API.Controllers
         }
 
         //7. Получение списка событий по определенным критериям (по дате, месту проведения, категории события) +
-        
+
         [HttpPost("filter")]
         public async Task<IActionResult> FilterEvents([FromBody] EventCriteria criteria)
         {
@@ -97,10 +102,10 @@ namespace API.Controllers
             var events = await _eventService.GetEventsByCriteriaAsync(criteria);
             return Ok(events);
         }
-        
+
         //8. Возможность добавления изображений к событиям и их хранение. +
         // включена в тип Event   
-        
+
         // получение списка событий пользователя
         [HttpGet("user-events/{UserId}")]
         public async Task<IActionResult> GetEventsFromUser(int UserId)
@@ -109,7 +114,32 @@ namespace API.Controllers
             var events = await _eventService.getEventsByUserId(UserId);
             return Ok(events);
         }
-        
-        
-    }
+
+        // поиск по дате или названию
+        [HttpPost("search&page={page}&pageSize={pageSize}")]
+        public async Task<IActionResult> SearchEvents([FromBody] SearchDTO model,[FromRoute] int page,int pageSize)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if(model.Date == null && string.IsNullOrEmpty(model.Name))
+                return BadRequest("Date or Name is required");
+            var events = await _eventService.SearchEvents(model,page,pageSize);
+            return Ok(events);
+        }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetCountEvents()
+        {
+            var count = await _eventService.GetCountEvents();
+            if (count > -1)
+            {
+                return Ok(count);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        } 
+
+}
 }

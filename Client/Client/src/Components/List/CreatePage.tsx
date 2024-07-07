@@ -82,6 +82,7 @@ export const CreatePage:React.FC<CreatePageProps> = (
                         id="dateTime"
                         placeholder={"Дата и время проведения"}
                         onChange={(e) => setevent({...event, date: new Date(e.target.value)})}
+                        value={event.date?.toISOString().slice(0, 16)}
                     />
                     
                     

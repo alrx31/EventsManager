@@ -10,7 +10,7 @@ namespace EventManagement.Application.Services
     public interface IEventService
     {
         // main
-        Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page);
+        Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page,int pageSize);
         Task<Event> GetEventByIdAsync(int id);
         Task<EventRequest> GetEventByIdAsyncRequest(int id);
         Task<Event> GetEventByNameAsync(string name);
@@ -19,6 +19,7 @@ namespace EventManagement.Application.Services
         Task DeleteEventAsync(int id);
         Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria);
         Task<List<EventRequest>> getEventsByUserId(int id);
-
+        Task<List<EventRequest>> SearchEvents(SearchDTO model,int page,int pageSize);
+        Task<int> GetCountEvents();
     }
 }

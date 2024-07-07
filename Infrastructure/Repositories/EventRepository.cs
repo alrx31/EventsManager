@@ -26,11 +26,10 @@ namespace EventManagement.Infrastructure.Repositories
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page)
+        public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page,int pageSize)
         {
             var datas =  await _dbContext.Events.ToListAsync();
-            // select events from 0 to 10*page
-            return datas.Take(10 * page).Select(e => new EventRequest
+            return datas.Skip((page-1)*pageSize).Take(pageSize).Select(e => new EventRequest
             {
                 Id = e.Id,
                 Name = e.Name,
@@ -120,8 +119,6 @@ namespace EventManagement.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        
-
         public async Task UpdateEventAsync(int eventId,EventDTO updatedEvent)
         {
             if (updatedEvent == null)
@@ -202,11 +199,7 @@ namespace EventManagement.Infrastructure.Repositories
             }
 
             IQueryable<Event> query = _dbContext.Events;
-
-            /*if (criteria.Date.HasValue)
-            {
-                query = query.Where(e => e.Date == criteria.Date.Value);
-            }*/
+            
 
             if (!string.IsNullOrEmpty(criteria.Location))
             {
@@ -237,11 +230,34 @@ namespace EventManagement.Infrastructure.Repositories
                     ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
                 }).ToListAsync();
         }
+
+        public async Task<List<EventRequest>> SearchEvents(SearchDTO model,int page,int pageSize)
+        {
+            var events = _dbContext.Events.Where(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
+            return await events.Select(e=> new EventRequest
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                Location = e.Location,
+                Category = e.Category,
+                Date = e.Date,
+                MaxParticipants = e.MaxParticipants,
+                ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
+            }).ToListAsync();
+        }
+
+        public async Task<int> GetCountEvents()
+        {
+            return await _dbContext.Events.CountAsync();
+        }
+        
         
         private async Task<int> GetLastEventId()
         {
             return  await _dbContext.Events.AnyAsync() ? await _dbContext.Events.MaxAsync(e => e.Id) : 0;
         }
+        
         
     }
 }

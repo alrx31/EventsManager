@@ -15,13 +15,13 @@ const EventMenu:React.FC<IEventMenuProps> = (
     
     
     let {EventId} = useParams();
-    let [Event,setEvent] = React.useState<IEvent|undefined>(undefined);
+    let [Event,setEvent] = React.useState<IEvent>({} as IEvent);
     let [isLoad,setIsLoad] = React.useState(false);
     let [isParticipant,setIsParticipant] = React.useState(false);
     let history = useNavigate();
     let {store} = useContext(Context)
     let [isFull, setIsFull] = React.useState(true);
-
+    
     useEffect(()=>{
         setIsLoad(true);
         
@@ -29,22 +29,43 @@ const EventMenu:React.FC<IEventMenuProps> = (
             .then((response) => {
                 if (response.status === 200) {
                     setEvent(response.data);
+                    
+                    
+                    checkParticipant();
                 } else {
                     throw 'Ошибка получения данных';
                 }
             }).catch((e: any) => {
                 console.log(e.response?.data?.message);
             })
-        getParticipants();
-        checkParticipant();
-    },[EventId])
 
+        setIsLoad(false)
+    },[EventId])
+    
+    useEffect(()=>{
+        EventsService.getParticipants(Number(EventId))
+            .then((response)=>{
+                if(response.status === 200){
+                    let participants = response.data;
+                    console.log(participants.length, Event.maxParticipants)
+                    if(Event?.maxParticipants && participants.length < Event?.maxParticipants){
+                        setIsFull(false);
+                    }else{
+                        console.log('asdasd')
+                    }
+                }
+            }).catch((e:any)=>{
+            console.log(e.response?.data?.message);
+            alert("Ошибка получения данных, на мероприятие записаться не получится");
+        })
+    },[Event])
+    
     
     if(isLoad){
         return <Waiter/> 
     }
-    let checkParticipant = async ()=>{
-        await EventsService.getEvetnsByUserId(store.user.id)
+    let checkParticipant = ()=>{
+        EventsService.getEvetnsByUserId(store.user.id)
             .then((response)=>{
                 if(response.status === 200){
                     let events = response.data;
@@ -57,8 +78,6 @@ const EventMenu:React.FC<IEventMenuProps> = (
                 }
             }).catch((e:any)=>{
                 console.log(e.response?.data?.message);
-            }).finally(()=>{
-                setIsLoad(false);
             })
     }
     
@@ -84,9 +103,9 @@ const EventMenu:React.FC<IEventMenuProps> = (
             console.log("store.user или Event равны null", store.user, Event);
         }
     }
-    let handleDelete =async ()=>{
+    let handleDelete =()=>{
         setIsLoad(true);
-        await EventsService.deleteEventParticipant(Number(EventId),store.user.id)
+        EventsService.deleteEventParticipant(Number(EventId),store.user.id)
             .then((response)=>{
                 if(response.status === 200){
                     alert("Вы успешно отписались от мероприятия");
@@ -104,19 +123,8 @@ const EventMenu:React.FC<IEventMenuProps> = (
             })
     }
     
-    let getParticipants = async ()=>{
-        await EventsService.getParticipants(Number(EventId))
-            .then((response)=>{
-                if(response.status === 200){
-                    let participants = response.data;
-                    if(Event?.maxParticipants && participants.length < Event?.maxParticipants){
-                        setIsFull(false);
-                    }
-                }
-            }).catch((e:any)=>{
-                console.log(e.response?.data?.message);
-                alert("Ошибка получения данных, на мероприятие записаться не получится");
-            })
+    let getParticipants = ()=>{
+        
     }
     
     return (

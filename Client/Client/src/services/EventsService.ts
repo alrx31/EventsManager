@@ -3,8 +3,8 @@ import $api from "../http";
 import {IEvent, IEventCreate} from "../models/Event";
 
 export default  class EventsService{
-    static fetchEvents(page:number):Promise<AxiosResponse>{
-        return $api.get<AxiosResponse<IEvent>>(`/Events/events/${page}`);
+    static fetchEvents(page:number,pageSize:number):Promise<AxiosResponse>{
+        return $api.get<AxiosResponse<IEvent[]>>(`/Events/page=${page}&pageSize=${pageSize}`);
     }
     static fetchEvent(id: number): Promise<AxiosResponse>{
         return $api.get<AxiosResponse<IEvent>>(`/Events/${id}`);
@@ -35,5 +35,20 @@ export default  class EventsService{
     static getParticipants(eventId:number):Promise<AxiosResponse>{
         return $api.get<AxiosResponse>(`/Participants/${eventId}/participants`);
     }
+    static searchEvents(
+        NameS:string,
+        DateS:Date,
+        pageNum:number,
+        perPage:number
+    ):Promise<AxiosResponse> {
+        let dataS = {
+            "date":DateS,
+            "name":NameS
+        }
+        return $api.post<AxiosResponse>(`Events/search&page=${pageNum}&pageSize=${perPage}`,dataS);
+    }
     
+    static getCountEvents():Promise<AxiosResponse>{
+        return $api.get<AxiosResponse>(`/Events/count`);
+    }
 } 

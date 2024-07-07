@@ -12,7 +12,7 @@ export default class Store {
     user = {} as IUser;
     isAuht = false;
     isLoading = false;
-
+    pageSize = 5;
 
     constructor() {
         makeAutoObservable(this);
