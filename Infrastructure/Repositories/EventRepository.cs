@@ -9,6 +9,7 @@ using EventManagement.Domain;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -234,7 +235,7 @@ namespace EventManagement.Infrastructure.Repositories
         public async Task<List<EventRequest>> SearchEvents(SearchDTO model,int page,int pageSize)
         {
             var events = _dbContext.Events.Where(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
-            return await events.Select(e=> new EventRequest
+            return await events.Skip((page-1)*pageSize).Take(pageSize).Select(e=> new EventRequest
             {
                 Id = e.Id,
                 Name = e.Name,
@@ -251,7 +252,11 @@ namespace EventManagement.Infrastructure.Repositories
         {
             return await _dbContext.Events.CountAsync();
         }
-        
+
+        public async Task<int> GetCountEventsSearch(SearchDTO model)
+        {
+           return await _dbContext.Events.CountAsync(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
+        }
         
         private async Task<int> GetLastEventId()
         {

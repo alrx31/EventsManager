@@ -127,6 +127,19 @@ namespace API.Controllers
             return Ok(events);
         }
 
+        // пагинация при поиске
+        [HttpPost("search/count")]
+        public async Task<IActionResult> getCountEventsSearch([FromBody] SearchDTO model)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            var count = await _eventService.GetCountEventsSearch(model);
+            if (count > -1)
+            {
+                return Ok(count);
+            }
+            return BadRequest();
+        }
+        
         [HttpGet("count")]
         public async Task<IActionResult> GetCountEvents()
         {
@@ -135,10 +148,7 @@ namespace API.Controllers
             {
                 return Ok(count);
             }
-            else
-            {
-                return BadRequest();
-            }
+            return BadRequest();
         } 
 
 }

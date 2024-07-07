@@ -21,5 +21,6 @@ namespace EventManagement.Application.Services
         Task<List<EventRequest>> getEventsByUserId(int id);
         Task<List<EventRequest>> SearchEvents(SearchDTO model,int page,int pageSize);
         Task<int> GetCountEvents();
+        Task<int> GetCountEventsSearch(SearchDTO model);
     }
 }

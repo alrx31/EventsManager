@@ -133,4 +133,9 @@ public class EventService : IEventService
     {
         return await _eventRepository.GetCountEvents();
     }
+
+    public async Task<int> GetCountEventsSearch(SearchDTO model)
+    {
+        return await _eventRepository.GetCountEventsSearch(model);
+    }
 }

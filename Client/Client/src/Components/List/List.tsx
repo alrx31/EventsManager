@@ -1,4 +1,4 @@
-﻿import React, {useContext, useEffect} from 'react';
+﻿import React, {useContext, useEffect, useState} from 'react';
 import './List.scss';
 import {useNavigate} from "react-router-dom";
 import {Context} from "../../index";
@@ -19,14 +19,14 @@ const List: React.FC<ListProps> = (
     // пагинация
     const [page, setPage] = React.useState(1);
     const [events, setEvents] = React.useState<IEvent[]>([]);
-    const [countPages, setCountPages] = React.useState(0);
+    const [countPages, setCountPages] = React.useState(1);
     
     const [isLoad,setIsLoad] = React.useState(false);
     
     const [search, setSearch] = React.useState('');
     const [date, setDate] = React.useState(new Date());
     const [pageS,setPageS] = React.useState(1);
-    
+    const [isInSearch, setInSearch] = useState(false);
     let getEvents = async () =>{
         try{
             await EventsService.fetchEvents(page,store.pageSize)
@@ -43,7 +43,7 @@ const List: React.FC<ListProps> = (
     }
 
 
-
+    
 
     useEffect(() => {
         setIsLoad(true)
@@ -51,12 +51,21 @@ const List: React.FC<ListProps> = (
         getEvents();
         setIsLoad(false)
     }, [page]);
-    
+    useEffect(() => {
+        setIsLoad(true);
+        searchF();
+        setIsLoad(false)
+    }, [pageS]);
     
     let countEvetns = () =>{
         EventsService.getCountEvents().then((response)=>{
             if(response.status == 200){
-                setCountPages(Math.ceil(response.data/store.pageSize));
+                if(response.data != 0){
+                    setCountPages(Math.ceil(response.data/store.pageSize));
+                }
+                else{
+                    setCountPages(1)
+                }
             }else{
                 throw 'Ошибка получения количества мероприятий';
             }
@@ -66,7 +75,8 @@ const List: React.FC<ListProps> = (
         EventsService.searchEvents(search, date, pageS, store.pageSize).then((response)=>{
             if(response.status == 200){
                 setEvents(response.data);
-                setCountPages(1)
+                if (events.length === 0) return;
+                getSearchEventsCount()
             }else{
                 throw 'Ошибка поиска';
             }    
@@ -74,11 +84,33 @@ const List: React.FC<ListProps> = (
     }
     
     let handleChangePage = (el:number)=>{
-        setPage(el);
+        if(isInSearch){
+            setPageS(el)
+        }else{
+            setPage(el);
+        }
     }
     let HandleSubmitSearch = (e:any)=>{
         e.preventDefault();
-        searchF()
+        setInSearch(true)
+        setIsLoad(true)
+        searchF();
+        setIsLoad(false)
+        
+    }
+    
+    let getSearchEventsCount = ()=>{
+        EventsService.getCountEventsSearch(search,date).then((response)=>{
+            if(response.status === 200){
+                if(response.data != 0){
+                    setCountPages(Math.ceil(response.data/store.pageSize));
+                }
+                else{
+                    setCountPages(1)
+                }
+            }
+        }).catch((e=>console.log(e)))
+        
     }
     
     
@@ -135,6 +167,14 @@ const List: React.FC<ListProps> = (
                         }}
                     >Выйти
                     </button>
+                    <button
+                        className={"user-logout"}
+                        onClick={() => {
+                            setInSearch(false);
+                            history("/");
+                            setPage(1);
+                        }}
+                    >Сбросить</button>
                 </div>
             </div>
 
@@ -144,7 +184,7 @@ const List: React.FC<ListProps> = (
                         <li
                             key={index}
                             onClick={() => handleChangePage(el)}
-                            className={page == el ? 'active' : ''}
+                            className={isInSearch ? (pageS == el ? 'active' : ''):(page == el ? 'active' : '')}
                         >
                             {el}
                         </li>

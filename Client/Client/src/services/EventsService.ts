@@ -51,4 +51,11 @@ export default  class EventsService{
     static getCountEvents():Promise<AxiosResponse>{
         return $api.get<AxiosResponse>(`/Events/count`);
     }
+    static getCountEventsSearch(NameS:string, DateS:Date):Promise<AxiosResponse>{
+        let dataS = {
+            "date":DateS,
+            "name":NameS
+        }
+        return $api.post<AxiosResponse>(`Events/search/count`,dataS);
+    }
 } 
