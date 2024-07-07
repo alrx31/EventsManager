@@ -93,13 +93,13 @@ namespace API.Controllers
 
         //7. Получение списка событий по определенным критериям (по дате, месту проведения, категории события) +
 
-        [HttpPost("filter")]
-        public async Task<IActionResult> FilterEvents([FromBody] EventCriteria criteria)
+        [HttpPost("filter&page={page}&pageSize={pageSize}")]
+        public async Task<IActionResult> FilterEvents([FromBody] EventCriteria criteria,int page,int pageSize)
         {
             if (criteria == null)
                 return BadRequest("Criteria is null");
 
-            var events = await _eventService.GetEventsByCriteriaAsync(criteria);
+            var events = await _eventService.GetEventsByCriteriaAsync(criteria,page,pageSize);
             return Ok(events);
         }
 
@@ -149,7 +149,18 @@ namespace API.Controllers
                 return Ok(count);
             }
             return BadRequest();
-        } 
+        }
 
-}
+        [HttpPost("filter/count")]
+        public async Task<IActionResult> getCountEventsFilter([FromBody] EventCriteria model)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            var count = await _eventService.GetCountEventsFilter(model);
+            if (count > -1)
+            {
+                return Ok(count);
+            }
+            return BadRequest();
+        }
+    }
 }

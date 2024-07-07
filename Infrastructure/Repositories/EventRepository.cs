@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Threading.Tasks;
 using AutoMapper;
 using EventManagement.Application.Models;
@@ -9,6 +10,7 @@ using EventManagement.Domain;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +23,7 @@ namespace EventManagement.Infrastructure.Repositories
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public EventRepository(ApplicationDbContext dbContext, IUnitOfWork unitOfWork,IMapper mapper)
+        public EventRepository(ApplicationDbContext dbContext,IMapper mapper)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -191,8 +193,9 @@ namespace EventManagement.Infrastructure.Repositories
             _dbContext.Events.Remove(eventToDelete);
             await _dbContext.SaveChangesAsync(); // Сохраняем изменения в базе данных
         }
+        
 
-        public async Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria)
+        public async Task<List<EventRequest>> GetEventsByCriteriaAsync(EventCriteria criteria,int page,int pageSize)
         {
             if (criteria == null)
             {
@@ -212,7 +215,17 @@ namespace EventManagement.Infrastructure.Repositories
                 query = query.Where(e => e.Category == criteria.Category);
             }
 
-            return await query.ToListAsync();
+            return await query.Skip((page-1)*pageSize).Take(pageSize).Select(e=> new EventRequest
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                Location = e.Location,
+                Category = e.Category,
+                Date = e.Date,
+                MaxParticipants = e.MaxParticipants,
+                ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
+            }).ToListAsync();
         }
 
         public async Task<List<EventRequest>> getEventsByUserId(int id)
@@ -257,6 +270,13 @@ namespace EventManagement.Infrastructure.Repositories
         {
            return await _dbContext.Events.CountAsync(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
         }
+
+        public async Task<int> GetCountEventsFilter(EventCriteria model)
+        {
+           return await _dbContext.Events.CountAsync(e =>(!String.IsNullOrEmpty(model.Category) && model.Category == e.Category) && (!String.IsNullOrEmpty(model.Location) && model.Location == e.Location));
+        }
+
+        
         
         private async Task<int> GetLastEventId()
         {

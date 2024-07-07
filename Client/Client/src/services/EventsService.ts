@@ -3,13 +3,13 @@ import $api from "../http";
 import {IEvent, IEventCreate} from "../models/Event";
 
 export default  class EventsService{
-    static fetchEvents(page:number,pageSize:number):Promise<AxiosResponse>{
+    static async fetchEvents(page:number,pageSize:number):Promise<AxiosResponse>{
         return $api.get<AxiosResponse<IEvent[]>>(`/Events/page=${page}&pageSize=${pageSize}`);
     }
-    static fetchEvent(id: number): Promise<AxiosResponse>{
+    static async fetchEvent(id: number): Promise<AxiosResponse>{
         return $api.get<AxiosResponse<IEvent>>(`/Events/${id}`);
     }
-    static createEvent(event: IEventCreate): Promise<AxiosResponse> {
+    static async createEvent(event: IEventCreate): Promise<AxiosResponse> {
         
         const formData = new FormData();
         formData.append("Name", event.name);
@@ -24,18 +24,18 @@ export default  class EventsService{
         return $api.post<AxiosResponse>('/Events/create-event', formData);
     }
     
-    static getEvetnsByUserId(id:number):Promise<AxiosResponse>{
+    static async getEvetnsByUserId(id:number):Promise<AxiosResponse>{
         return $api.get<AxiosResponse<IEvent[]>>(`/Events/user-events/${id}`);
     }
     
-    static deleteEventParticipant(eventId:number, userId:number):Promise<AxiosResponse>{
+    static async deleteEventParticipant(eventId:number, userId:number):Promise<AxiosResponse>{
         return $api.delete<AxiosResponse>(`/Participants/${eventId}/cancel/${userId}`);
     }
     
-    static getParticipants(eventId:number):Promise<AxiosResponse>{
+    static async getParticipants(eventId:number):Promise<AxiosResponse>{
         return $api.get<AxiosResponse>(`/Participants/${eventId}/participants`);
     }
-    static searchEvents(
+    static async searchEvents(
         NameS:string,
         DateS:Date,
         pageNum:number,
@@ -48,14 +48,31 @@ export default  class EventsService{
         return $api.post<AxiosResponse>(`Events/search&page=${pageNum}&pageSize=${perPage}`,dataS);
     }
     
-    static getCountEvents():Promise<AxiosResponse>{
+    static async getCountEvents():Promise<AxiosResponse>{
         return $api.get<AxiosResponse>(`/Events/count`);
     }
-    static getCountEventsSearch(NameS:string, DateS:Date):Promise<AxiosResponse>{
+    static async getCountEventsSearch(NameS:string, DateS:Date):Promise<AxiosResponse>{
         let dataS = {
             "date":DateS,
             "name":NameS
         }
         return $api.post<AxiosResponse>(`Events/search/count`,dataS);
     }
+    
+    static async filterEvents(location:string,category:string,page:number,pageSize:number):Promise<AxiosResponse>{
+        let data = {
+            'location':location,
+            'category':category
+        }
+        return $api.post<AxiosResponse>(`/events/filter&page=${page}&pageSize=${pageSize}`,data);
+    }
+    
+    static async getFilterEventsCount(location:string,category:string):Promise<AxiosResponse>{
+        let data = {
+            'location':location,
+            'category':category
+        }
+        return $api.post<AxiosResponse<number>>(`events/filter/count`, data);
+    }
+    
 } 

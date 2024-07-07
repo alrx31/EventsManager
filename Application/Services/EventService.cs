@@ -103,13 +103,14 @@ public class EventService : IEventService
         await _unitOfWork.CompleteAsync();
     }
     
-    public async Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria)
+
+    public async Task<List<EventRequest>> GetEventsByCriteriaAsync(EventCriteria criteria,int page,int pageSize)
     {
         if(criteria == null)
         {
             throw new Exception("Criteria is null");
         }
-        return await _eventRepository.GetEventsByCriteriaAsync(criteria);
+        return await _eventRepository.GetEventsByCriteriaAsync(criteria, page, pageSize);
     }
 
     public async Task<List<EventRequest>> getEventsByUserId(int id)
@@ -137,5 +138,9 @@ public class EventService : IEventService
     public async Task<int> GetCountEventsSearch(SearchDTO model)
     {
         return await _eventRepository.GetCountEventsSearch(model);
+    }
+    public async Task<int> GetCountEventsFilter(EventCriteria model)
+    {
+        return await _eventRepository.GetCountEventsFilter(model);
     }
 }

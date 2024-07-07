@@ -16,11 +16,12 @@ namespace EventManagement.Infrastructure.Repositories
         Task AddEventAsync(EventDTO newEvent);
         Task UpdateEventAsync(int eventId,EventDTO updatedEvent);
         Task DeleteEventAsync(int id);
-        Task<IEnumerable<Event>> GetEventsByCriteriaAsync(EventCriteria criteria);
+        Task<List<EventRequest>> GetEventsByCriteriaAsync(EventCriteria criteria,int page,int pageSize);
         Task<List<EventRequest>> getEventsByUserId(int id);
         Task<List<EventRequest>> SearchEvents(SearchDTO model,int page,int pageSize);
         Task<int> GetCountEvents();
         Task<int> GetCountEventsSearch(SearchDTO model);
+        Task<int> GetCountEventsFilter(EventCriteria model);
 
     }
 }

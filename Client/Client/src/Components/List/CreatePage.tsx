@@ -1,4 +1,4 @@
-﻿import React, {useEffect} from 'react';
+﻿import React from 'react';
 import "./CreatePage.scss";
 import {useNavigate} from "react-router-dom";
 import {Waiter} from "../Waiter/Waiter";

@@ -22,10 +22,17 @@ const List: React.FC<ListProps> = (
     const [countPages, setCountPages] = React.useState(1);
     
     const [isLoad,setIsLoad] = React.useState(false);
-    
+    // поиск
     const [search, setSearch] = React.useState('');
     const [date, setDate] = React.useState(new Date());
     const [pageS,setPageS] = React.useState(1);
+    
+    // фильтрация
+    const [location,setLocation] = useState("");
+    const [category,setCategory] = useState("")
+    const [pageF, setPageF] = useState(1);
+    
+    const [isInFilter,setIsFilter] = useState(false);
     const [isInSearch, setInSearch] = useState(false);
     let getEvents = async () =>{
         try{
@@ -57,6 +64,7 @@ const List: React.FC<ListProps> = (
         setIsLoad(false)
     }, [pageS]);
     
+    
     let countEvetns = () =>{
         EventsService.getCountEvents().then((response)=>{
             if(response.status == 200){
@@ -71,7 +79,7 @@ const List: React.FC<ListProps> = (
             }
         }).catch(e=>console.log(e))
     }
-    let searchF =async  ()=>{
+    let searchF = ()=>{
         EventsService.searchEvents(search, date, pageS, store.pageSize).then((response)=>{
             if(response.status == 200){
                 setEvents(response.data);
@@ -82,6 +90,19 @@ const List: React.FC<ListProps> = (
             }    
         }).catch(e=>console.log(e));
     }
+    
+    let filterF = () =>{
+        EventsService.filterEvents(location,category,pageF,store.pageSize).then((response)=>{
+            if(response.status === 200){
+                setEvents(response.data);
+                if(events.length === 0) return;
+                getFilterEventsCount();
+            }else{
+                throw 'Ошибка фильтрации'
+            }
+        })
+    }
+    
     
     let handleChangePage = (el:number)=>{
         if(isInSearch){
@@ -96,7 +117,13 @@ const List: React.FC<ListProps> = (
         setIsLoad(true)
         searchF();
         setIsLoad(false)
-        
+    }
+    let HandleSubmitFilter = (e:any)=>{
+        e.preventDefault();
+        setIsFilter(true);
+        setIsLoad(true);
+        filterF();
+        setIsLoad(false);
     }
     
     let getSearchEventsCount = ()=>{
@@ -110,7 +137,19 @@ const List: React.FC<ListProps> = (
                 }
             }
         }).catch((e=>console.log(e)))
-        
+    }
+    
+    let getFilterEventsCount = () =>{
+        EventsService.getFilterEventsCount(location,category).then(response=>{
+            if(response.status === 200){
+                if(response.data != 0){
+                    setCountPages(Math.ceil(response.data/store.pageSize));
+                }
+                else{
+                    setCountPages(1)
+                }
+            }
+        }).catch((e=>console.log(e)))
     }
     
     
@@ -148,8 +187,48 @@ const List: React.FC<ListProps> = (
                         />
                     </div>
                     <button type="submit">Искать</button>
+                    <button
+                        className={"user-logout"}
+                        onClick={() => {
+                            setInSearch(false);
+                            history("/");
+                            setPage(1);
+                        }}
+                    >Сбросить
+                    </button>
                 </form>
 
+                <div className="filter-menu">
+                    <form
+                        onSubmit={HandleSubmitFilter}
+                    >
+                        Место проведения
+                        <input
+                            type="text"
+                            value={location}
+                            onChange={(e)=>setLocation(e.target.value)}
+                        />
+                        Категория
+                        <input
+                            type={"text"}
+                            value={category}
+                            onChange={(e)=>setCategory(e.target.value)}
+                        />
+                        <button
+                            type={"submit"}
+                            className={"user-logout"}
+                        >фильтровать</button>
+                        <button
+                            className={"user-logout"}
+                            onClick={() => {
+                                setIsFilter(false);
+                                history("/");
+                                setPage(1);
+                            }}
+                        >Сбросить
+                        </button>
+                    </form>
+                </div>
 
                 <div>
                     <button
@@ -167,30 +246,21 @@ const List: React.FC<ListProps> = (
                         }}
                     >Выйти
                     </button>
-                    <button
-                        className={"user-logout"}
-                        onClick={() => {
-                            setInSearch(false);
-                            history("/");
-                            setPage(1);
-                        }}
-                    >Сбросить</button>
+                   
                 </div>
             </div>
 
             <ul>
-                {countPages > 1 ? (
+                {countPages <= 1 ? null : (
                     Array.from({length: countPages}, (_, i) => i + 1).map((el, index) => (
                         <li
                             key={index}
                             onClick={() => handleChangePage(el)}
-                            className={isInSearch ? (pageS == el ? 'active' : ''):(page == el ? 'active' : '')}
+                            className={isInSearch ? (pageS == el ? 'active' : '') : (isInFilter ? (pageF == el ? 'active' : '') : (page == el ? 'active' : ''))}
                         >
                             {el}
                         </li>
                     ))
-                ) : (
-                    null
                 )}
             </ul>
             
