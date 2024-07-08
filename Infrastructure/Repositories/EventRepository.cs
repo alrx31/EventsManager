@@ -273,7 +273,7 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task<int> GetCountEventsFilter(EventCriteria model)
         {
-           return await _dbContext.Events.CountAsync(e =>(!String.IsNullOrEmpty(model.Category) && model.Category == e.Category) && (!String.IsNullOrEmpty(model.Location) && model.Location == e.Location));
+           return await _dbContext.Events.CountAsync(e =>(string.IsNullOrEmpty(model.Location) || e.Location == model.Location) && (string.IsNullOrEmpty(model.Category) || e.Category == model.Category));
         }
 
         

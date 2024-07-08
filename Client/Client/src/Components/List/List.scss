@@ -223,3 +223,57 @@ ul {
         }
     }
 }
+.filter-menu {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    margin: 16px auto;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+
+            &:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+        }
+
+        .user-logout {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+
+            &:first-of-type {
+                background-color: #007bff;
+                color: #fff;
+
+                &:hover {
+                    background-color: #0056b3;
+                }
+            }
+
+            &:last-of-type {
+                background-color: #6c757d;
+                color: #fff;
+
+                &:hover {
+                    background-color: #5a6268;
+                }
+            }
+        }
+    }
+}

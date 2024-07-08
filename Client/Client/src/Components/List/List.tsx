@@ -17,9 +17,9 @@ const List: React.FC<ListProps> = (
     const history = useNavigate();
     const {store} = useContext(Context);
     // пагинация
-    const [page, setPage] = React.useState(1);
     const [events, setEvents] = React.useState<IEvent[]>([]);
     const [countPages, setCountPages] = React.useState(1);
+    const [page, setPage] = React.useState(1);
     
     const [isLoad,setIsLoad] = React.useState(false);
     // поиск
@@ -35,6 +35,7 @@ const List: React.FC<ListProps> = (
     const [isInFilter,setIsFilter] = useState(false);
     const [isInSearch, setInSearch] = useState(false);
     let getEvents = async () =>{
+        countEvetns();
         try{
             await EventsService.fetchEvents(page,store.pageSize)
                 .then((response)=>{
@@ -54,16 +55,20 @@ const List: React.FC<ListProps> = (
 
     useEffect(() => {
         setIsLoad(true)
-        countEvetns();
+        
         getEvents();
         setIsLoad(false)
     }, [page]);
     useEffect(() => {
-        setIsLoad(true);
+        if(!isInSearch) return;
         searchF();
         setIsLoad(false)
     }, [pageS]);
-    
+    useEffect(() => {
+        if(!isInFilter) return;
+        filterF();
+        setIsLoad(false)
+    }, [pageF]);
     
     let countEvetns = () =>{
         EventsService.getCountEvents().then((response)=>{
@@ -167,6 +172,7 @@ const List: React.FC<ListProps> = (
                 <form
                     className="search-form"
                     onSubmit={HandleSubmitSearch}
+                    
                 >
                     <div className="form-group">
                         <label>По имени</label>
@@ -188,47 +194,17 @@ const List: React.FC<ListProps> = (
                     </div>
                     <button type="submit">Искать</button>
                     <button
+                        type={"reset"}
                         className={"user-logout"}
                         onClick={() => {
                             setInSearch(false);
-                            history("/");
                             setPage(1);
+                            getEvents();
                         }}
                     >Сбросить
                     </button>
                 </form>
 
-                <div className="filter-menu">
-                    <form
-                        onSubmit={HandleSubmitFilter}
-                    >
-                        Место проведения
-                        <input
-                            type="text"
-                            value={location}
-                            onChange={(e)=>setLocation(e.target.value)}
-                        />
-                        Категория
-                        <input
-                            type={"text"}
-                            value={category}
-                            onChange={(e)=>setCategory(e.target.value)}
-                        />
-                        <button
-                            type={"submit"}
-                            className={"user-logout"}
-                        >фильтровать</button>
-                        <button
-                            className={"user-logout"}
-                            onClick={() => {
-                                setIsFilter(false);
-                                history("/");
-                                setPage(1);
-                            }}
-                        >Сбросить
-                        </button>
-                    </form>
-                </div>
 
                 <div>
                     <button
@@ -246,9 +222,44 @@ const List: React.FC<ListProps> = (
                         }}
                     >Выйти
                     </button>
-                   
+
                 </div>
             </div>
+
+            <div className="filter-menu">
+                <form
+                    onSubmit={HandleSubmitFilter}
+                >
+                    Место проведения
+                    <input
+                        type="text"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                    />
+                    Категория
+                    <input
+                        type={"text"}
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                    />
+                    <button
+                        type={"submit"}
+                        className={"user-logout"}
+                    >фильтровать
+                    </button>
+                    <button
+                        type={"reset"}
+                        className={"user-logout"}
+                        onClick={() => {
+                            setIsFilter(false);
+                            setPage(1);
+                            getEvents();
+                        }}
+                    >Сбросить
+                    </button>
+                </form>
+            </div>
+            
 
             <ul>
                 {countPages <= 1 ? null : (
@@ -263,7 +274,7 @@ const List: React.FC<ListProps> = (
                     ))
                 )}
             </ul>
-            
+
             <div className="list">
 
                 {events.length > 0 ?
@@ -301,7 +312,7 @@ const List: React.FC<ListProps> = (
                     )
 
                 }
-                
+
                 {//events.length > 0 && <button onClick={getEvents}>Загрузить еще</button>}
                 }
             </div>
