@@ -172,6 +172,10 @@ const List: React.FC<ListProps> = (
                 <form
                     className="search-form"
                     onSubmit={HandleSubmitSearch}
+                    onReset={() => {
+                        setSearch("");
+                        setDate(new Date());
+                    }}
                     
                 >
                     <div className="form-group">
@@ -229,6 +233,11 @@ const List: React.FC<ListProps> = (
             <div className="filter-menu">
                 <form
                     onSubmit={HandleSubmitFilter}
+                    onReset={() => {
+                        setLocation("");
+                        setCategory("");
+                    }
+                    }
                 >
                     Место проведения
                     <input
