@@ -47,11 +47,8 @@ const EventMenu:React.FC<IEventMenuProps> = (
             .then((response)=>{
                 if(response.status === 200){
                     let participants = response.data;
-                    console.log(participants.length, Event.maxParticipants)
                     if(Event?.maxParticipants && participants.length < Event?.maxParticipants){
                         setIsFull(false);
-                    }else{
-                        console.log('asdasd')
                     }
                 }
             }).catch((e:any)=>{
@@ -145,12 +142,12 @@ const EventMenu:React.FC<IEventMenuProps> = (
 
                 <div className="event-controll">
                     
-                    {/*<button
+                    {store.user.isAdmin && (<button
                         className={"edit-event"}
                         onClick={() => history(`/update/${Event?.id}`)}
-                    >Редактировать</button>*/}
+                    >Редактировать</button>)}
 
-                    {!isParticipant ? (
+                    {!store.user.isAdmin && (!isParticipant ? (
 
                         <button
                             className={"event-register"}
@@ -162,7 +159,7 @@ const EventMenu:React.FC<IEventMenuProps> = (
                             className={"event-delete"}
                             onClick={handleDelete}
                         >Отписаться </button>
-                    )}
+                    ))}
 
                     <button
                         className={"event-back"}

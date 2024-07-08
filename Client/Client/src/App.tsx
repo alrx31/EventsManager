@@ -10,6 +10,7 @@ import List from "./Components/List/List";
 import EventMenu from './Components/List/EventMenu';
 import {CreatePage} from "./Components/List/CreatePage";
 import {Profile} from "./Components/Profile/Profile";
+import {EditEventMenu} from "./Components/List/EditEvent";
 
 function App() {
     let history = useNavigate();
@@ -47,12 +48,16 @@ function App() {
         
     
       <Routes>
-         <Route path={"/login"}  element={<Login/>} />
-              <Route path={"/"} element={<List />} />
-              <Route path={"/register"} element={<Register />} />
-              <Route path={"/event/:EventId"} element={<EventMenu />} />
-              <Route path={"/create-event"} element={<CreatePage />} />
-                <Route path={"/user/:UserId"} element={<Profile />} />
+          <Route path={"/"} element={<List />} />
+            
+          <Route path={"/login"}  element={<Login/>} />
+          <Route path={"/register"} element={<Register />} />
+          
+          <Route path={"/event/:EventId"} element={<EventMenu />} />
+          <Route path={"/create-event"} element={<CreatePage />} />
+          <Route path={"/update/:EventId"} element={<EditEventMenu />}/>
+          
+          <Route path={"/user/:UserId"} element={<Profile />} />
       </Routes>
     </div>
   );

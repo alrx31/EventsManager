@@ -163,11 +163,13 @@ const List: React.FC<ListProps> = (
             {isLoad && <Waiter/>}
 
             <div className="List-bar">
-                <button
-                    className={"create-event"}
-                    onClick={() => history('/create-event')}
-                >Создать мероприятие
-                </button>
+                {store.user.isAdmin && (
+                    <button
+                        className={"create-event"}
+                        onClick={() => history('/create-event')}
+                    >Создать мероприятие
+                    </button>
+                )}
 
                 <form
                     className="search-form"

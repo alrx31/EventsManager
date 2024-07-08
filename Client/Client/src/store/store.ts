@@ -106,7 +106,8 @@ export default class Store {
                 lastName: res.data.lastName,
                 email: res.data.email,
                 birthDate: res.data.birthDate,
-                registrationDate: res.data.registrationDate
+                registrationDate: res.data.registrationDate,
+                isAdmin: res.data.isAdmin
             });
             else console.log('Ошибка получения данных пользователя');
 

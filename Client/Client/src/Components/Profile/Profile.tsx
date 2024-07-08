@@ -101,34 +101,38 @@ export const Profile:React.FC<IProfileProps> = ({
                 </div>
 
             </div>
-            
-            <div className="events">
-                <h2>Мероприятия пользователя</h2>
-                <h2>Всего: {events.length}</h2>
-                <div className="events-list">
-                    {events.map((event:IEvent)=>{
-                        return (
-                            <div className="event" key={event.id}
-                                onClick={()=>{
-                                    history(`/event/${event.id}`)
-                                }} 
-                            >
-                                <div className="event-image">
-                                    <img src={event.imageSrc} alt=""/>
+
+            {!store.user.isAdmin ? (
+                <div className="events">
+                    <h2>Мероприятия пользователя</h2>
+                    <h2>Всего: {events.length}</h2>
+                    <div className="events-list">
+                        {events.map((event:IEvent)=>{
+                            return (
+                                <div className="event" key={event.id}
+                                     onClick={()=>{
+                                         history(`/event/${event.id}`)
+                                     }}
+                                >
+                                    <div className="event-image">
+                                        <img src={event.imageSrc} alt=""/>
+                                    </div>
+                                    <div className="event-info">
+                                        <h3>{event.name}</h3>
+                                        <p>{event.description}</p>
+                                        <p>{event.date.toString()}</p>
+                                        <p>{event.location}</p>
+                                        <p>{event.category}</p>
+                                        <p>{event.maxParticipants}</p>
+                                    </div>
                                 </div>
-                                <div className="event-info">
-                                    <h3>{event.name}</h3>
-                                    <p>{event.description}</p>
-                                    <p>{event.date.toString()}</p>
-                                    <p>{event.location}</p>
-                                    <p>{event.category}</p>
-                                    <p>{event.maxParticipants}</p>
-                                </div>
-                            </div>
-                        )
-                    })}
+                            )
+                        })}
+                    </div>
                 </div>
-            </div>
+            ):(
+                <h2>Вы админ</h2>
+            ) }
             
             
             <div className="profile-controlls">
