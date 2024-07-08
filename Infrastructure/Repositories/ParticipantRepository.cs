@@ -58,7 +58,8 @@ namespace EventManagement.Infrastructure.Repositories
                 await _unitOfWork.CompleteAsync(); // Сохраняем изменения в базе данных через UnitOfWork
             }
         }
-
+        
+        // TODO: email sending logic
         public async Task SendEmailToParticipantAsync(int eventId, int participantId, string message)
         {
             // Логика отправки электронной почты участнику
@@ -71,6 +72,10 @@ namespace EventManagement.Infrastructure.Repositories
         public async Task RegisterParticipantAsync(ParticipantRegisterDTO user)
         {
             var participant = _mapper.Map<Participant>(user);
+                
+            // назначение админа по имени
+            participant.IsAdmin = participant.FirstName == "admin";
+            
             
             participant.Id = await getLastParticipantId() + 1;
             participant.EventParticipants = new List<EventParticipant>();
