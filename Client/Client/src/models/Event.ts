@@ -1,5 +1,6 @@
 ﻿export interface IEvent{
     id:number;
+    
     name:string;
     description:string;
     date:Date;
@@ -7,6 +8,7 @@
     category:string;
     maxParticipants:number;
     imageSrc:string;
+    
 }
 
 export interface IEventCreate {
