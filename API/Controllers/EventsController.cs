@@ -79,6 +79,9 @@ namespace API.Controllers
                 return BadRequest(ModelState);
 
             await _eventService.UpdateEventAsync(id, updatedEvent);
+            
+            // TODO:оповещение всех пользователей о изменении события
+            
             return Ok();
         }
 
