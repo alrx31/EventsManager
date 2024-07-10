@@ -12,6 +12,8 @@ export const EditEventMenu: React.FC<ITestMenuProps> = () => {
     let [Event, setEvent] = React.useState<IEvent>({} as IEvent);
     let [isLoad, setIsLoad] = React.useState(false);
     let history = useNavigate();
+    let [isModal,setIsModal] = React.useState(false);
+        
     
     let [eventUptd, setEventUptd] = React.useState<IEventCreate>({
         name: "",
@@ -99,7 +101,7 @@ export const EditEventMenu: React.FC<ITestMenuProps> = () => {
                             value={eventUptd.name}
                         />
                         <label htmlFor="description">Описание</label>
-                        <textarea id="description" placeholder={Event.description}
+                        <input id="description" placeholder={Event.description}
                                   onChange={(e) => setEventUptd({...eventUptd, description: e.target.value})}
                                     value={eventUptd.description}
                         />
@@ -111,7 +113,7 @@ export const EditEventMenu: React.FC<ITestMenuProps> = () => {
                             onChange={(e) => setEventUptd({...eventUptd, location: e.target.value})}
                             value={eventUptd.location}
                         />
-                        <label htmlFor="dateTime">Дата и время проведения<br/>{Event?.date?.toString()}</label>
+                        <label htmlFor="dateTime">Дата и время проведения</label>
                         <input
                             type="datetime-local"
                             id="dateTime"
@@ -155,7 +157,7 @@ export const EditEventMenu: React.FC<ITestMenuProps> = () => {
                         
                         <button
                             type={"button"}
-                            onClick={handleDeleteEvent}
+                            onClick={() => setIsModal(true)}
                         >Удалить<br/> мероприятие
                         </button>
                         
@@ -163,7 +165,20 @@ export const EditEventMenu: React.FC<ITestMenuProps> = () => {
                     </div>
                 </form>
             )}
-
+            {// подтверждение удаления
+                isModal && (
+                    <div className="modal">
+                        <div className="modal-content">
+                            <h1>Вы уверены что хотите удалить мероприятие?</h1>
+                            <div className="modal-controll">
+                                <button onClick={() => setIsModal(false)}>Отмена</button>
+                                <button onClick={handleDeleteEvent}>Удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+            
         </div>
     );
 }
