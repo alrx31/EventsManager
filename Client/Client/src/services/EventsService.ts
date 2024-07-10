@@ -75,4 +75,21 @@ export default  class EventsService{
         return $api.post<AxiosResponse<number>>(`events/filter/count`, data);
     }
     
+    static async deleteEvent(id:number):Promise<AxiosResponse>{
+        return $api.delete<AxiosResponse>(`/Events/${id}`);
+    }
+    
+    static async updateEvent(event:IEventCreate,eventId:number):Promise<AxiosResponse>{
+        const formData = new FormData();
+        formData.append("Name", event.name);
+        formData.append("Description", event.description);
+        formData.append("Date", event.date.toISOString());
+        formData.append("Location", event.location);
+        formData.append("Category", event.category);
+        formData.append("MaxParticipants", event.maxParticipants.toString());
+        formData.append("ImageData", event.imageData);
+        console.log(formData)
+        return $api.put<AxiosResponse>(`/Events/${eventId}`,formData);
+    }
+    
 } 
