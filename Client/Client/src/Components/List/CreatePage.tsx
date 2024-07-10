@@ -56,7 +56,7 @@ export const CreatePage:React.FC<CreatePageProps> = (
                 className="create-page-wrapper"
                 onSubmit={HandleCreateevent}
             >
-                <h1>Меню Создание Теста</h1>
+                <h1>Меню Создания Мероприятия</h1>
                 <div className="create-event">
                     <label htmlFor="name">Имя</label>
                     <input 
