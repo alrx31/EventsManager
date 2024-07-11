@@ -68,7 +68,7 @@ public class AuthService:IAuthService
 
     public async Task Logout(LogoutModel model)
     {
-        if (model.Token == null || model.UserId == 0)
+        if (model.Token == null || model.UserId <= 0)
             throw new ArgumentException("Invalid token or user id");
         await _participantRepository.CanselRefreshToken(model.UserId);
         await _unitOfWork.CompleteAsync();
