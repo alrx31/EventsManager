@@ -63,6 +63,7 @@ namespace EventManagement.Infrastructure.Repositories
         public async Task SendEmailToParticipantAsync(int eventId, int participantId, string message)
         {
             // Логика отправки электронной почты участнику
+            throw new NotImplementedException("send email method  not implemented");
         }
         
         

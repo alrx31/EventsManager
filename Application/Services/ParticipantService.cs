@@ -40,16 +40,7 @@ public class ParticipantService:IParticipantService
         await _unitOfWork.CompleteAsync();
     }
 
-    public async Task<string> Login(LoginModel model)
-    {
-        var user = await _participantRepository.LoginAsync(model);
-        if(user == null) throw new Exception("Invalid Credentials");
-        var token = GenerateJwtToken(user);
-        return token;
-    }
-    
-    
-    
+
     public Task RegisterParticipantToEventAsync(int eventId, int participantId)
     {
         if (eventId < 1) throw new Exception("Invalid Event Id");
@@ -85,21 +76,5 @@ public class ParticipantService:IParticipantService
         if(string.IsNullOrEmpty(message)) throw new Exception("Invalid Message");
         return _participantRepository.SendEmailToParticipantAsync(eventId, participantId, message);
     }
-    
-    // access token
-    private string GenerateJwtToken(Participant user){
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_key);
-        var tokenDescriptor = new SecurityTokenDescriptor()
-        {
-            Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
-            Expires = DateTime.UtcNow.AddSeconds(10),
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
-    }
-    
     
 }
