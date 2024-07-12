@@ -23,6 +23,11 @@ public class EventService : IEventService
     
     public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page,int pageSize)
     {
+        if(page < 1 || pageSize < 1)
+        {
+            throw new Exception("Invalid page or pageSize");
+        }
+        
         var events = await _eventRepository.GetAllEventsAsync(page,pageSize);
         if(events == null)
         {
@@ -33,6 +38,10 @@ public class EventService : IEventService
     
     public async Task<Event> GetEventByIdAsync(int id)
     {
+        if (id < 1)
+        {
+            throw new Exception("Invalid Event Id");
+        }
         var eventById = await _eventRepository.GetEventByIdAsync(id);
         if(eventById == null)
         {
@@ -53,6 +62,10 @@ public class EventService : IEventService
     
     public async Task<Event> GetEventByNameAsync(string name)
     {
+        if(string.IsNullOrEmpty(name))
+        {
+            throw new Exception("Name is null");
+        }
         var eventByName = await _eventRepository.GetEventByNameAsync(name);
         if(eventByName == null)
         {
@@ -70,8 +83,12 @@ public class EventService : IEventService
         // check all required fields
         if(string.IsNullOrEmpty(newEvent.Name) ||
            string.IsNullOrEmpty(newEvent.Description) ||
+           string.IsNullOrEmpty(newEvent.Category) ||
+           string.IsNullOrEmpty(newEvent.Location) ||
            newEvent.MaxParticipants < 1 ||
-           newEvent.Date == null
+           newEvent.Date == null ||
+            newEvent.ImageData == null           
+           
            )
         {
             throw new Exception("Required fields are empty");
