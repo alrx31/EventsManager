@@ -305,14 +305,235 @@ public class EventServiceTests
     
     
     // обновление мероприятия
+    [Fact]
+    // удачное обновление мероприятия
+    public async Task UpdateEvent_Success()
+    {
+        var EventId = 1;
+        var newEvent = new EventDTO
+        {
+            Name = "1",
+            Description = "1",
+            Date = new DateTime(2022, 1, 1),
+            Location = "1",
+            Category = "1",
+            MaxParticipants = 1,
+            ImageData = new FormFile(new MemoryStream(new byte[2]), 0, 2, "1", "1")
+        };
+
+        await _eventService.UpdateEventAsync(EventId, newEvent);
+        
+        _mockRepository.Verify(repo => repo.UpdateEventAsync(EventId, newEvent), Times.Once);
+    }
     
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-2)]
+    // неудачное обновление мероприятия (нулевое поле)
+    public async Task UpdateEvent_Fail_NullorEmpty(int Id)
+    {
+        var EventId = Id;
+        var newEvent = new EventDTO
+        {
+            Name = "1",
+            Description = "1",
+            Date = new DateTime(2022, 1, 1),
+            Location = "1",
+            Category = "1",
+            MaxParticipants = 1,
+            ImageData = new FormFile(new MemoryStream(new byte[2]), 0, 2, "1", "1")
+        };
+        
+        await Assert.ThrowsAsync<Exception>(() => _eventService.UpdateEventAsync(EventId, newEvent));
+        
+        
+        
+    }
     
+    [Fact]
+    // неудачное обновление мероприятия в репозитории
+    
+    public async Task UpdateEvent_Fail()
+    {
+        var EventId = 1;
+        var newEvent = new EventDTO
+        {
+            Name = "1",
+            Description = "1",
+            Date = new DateTime(2022, 1, 1),
+            Location = "1",
+            Category = "1",
+            MaxParticipants = 1,
+            ImageData = new FormFile(new MemoryStream(new byte[2]), 0, 2, "1", "1")
+        };
+
+        _mockRepository.Setup(repo => repo.UpdateEventAsync(EventId, newEvent))
+            .ThrowsAsync(new Exception("Failed to update event"));
+
+        var exception = await Assert.ThrowsAsync<Exception>(() => _eventService.UpdateEventAsync(EventId, newEvent));
+        Assert.Equal("Failed to update event", exception.Message);
+    }
+
     // удаление мероприятия
+
+    [Fact]
+    // успешное удаление мероприятия
+    public async Task DeleteEvent_Success()
+    {
+        // Arrange
+        int eventId = 1;
+        var eventToDelete = new Event { Id = eventId };
+        _mockRepository.Setup(repo => repo.GetEventByIdAsync(eventId))
+            .ReturnsAsync(eventToDelete);
+        _mockRepository.Setup(repo => repo.DeleteEventAsync(eventId))
+            .Returns(Task.CompletedTask);
+        _mockUnitOfWork.Setup(uow => uow.CompleteAsync())
+            .Returns(Task.CompletedTask);
+
+        // Act
+        await _eventService.DeleteEventAsync(eventId);
+
+        // Assert
+        _mockRepository.Verify(repo => repo.GetEventByIdAsync(eventId), Times.Once);
+        _mockRepository.Verify(repo => repo.DeleteEventAsync(eventId), Times.Once);
+        _mockUnitOfWork.Verify(uow => uow.CompleteAsync(), Times.Once);
+    }
+
+    [Fact]
+    // неудачное удаление мероприятия из-за отсутствия мероприятия
+    public async Task DeleteEvent_Fail()
+    {
+        // Arrange
+        int eventId = 1;
+        _mockRepository.Setup(repo => repo.GetEventByIdAsync(eventId))
+            .ReturnsAsync((Event)null);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _eventService.DeleteEventAsync(eventId));
+        Assert.Equal("Event not found", exception.Message);
+    }
     
     // получение всех мероприятий по критериям   
     
+    [Fact]
+    // успешное получение всех мероприятий по критериям
+    public async Task GetEventsByCriteriaAsync_Fail()
+    {
+        // Arrange
+        EventCriteria criteria = null;
+        int page = 1;
+        int pageSize = 10;
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _eventService.GetEventsByCriteriaAsync(criteria, page, pageSize));
+        Assert.Equal("Criteria is null", exception.Message);
+    }
+
+    [Fact]
+    // успешное получение всех мероприятий по критериям
+    public async Task GetEventsByCriteriaAsync_Success()
+    {
+        // Arrange
+        var criteria = new EventCriteria { Location = "Test Event" };
+        int page = 1;
+        int pageSize = 10;
+
+        var events = new List<EventRequest>
+        {
+            new EventRequest { Id = 1, Name = "Test Event 1" },
+            new EventRequest { Id = 2, Name = "Test Event 2" }
+        };
+
+        _mockRepository.Setup(repo => repo.GetEventsByCriteriaAsync(criteria, page, pageSize))
+            .ReturnsAsync(events);
+
+        // Act
+        var result = await _eventService.GetEventsByCriteriaAsync(criteria, page, pageSize);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal(events, result);
+    }
     // получение всех мероприятий у пользователя
     
+    [Fact]
+    // успешное получение всех мероприятий у пользователя
+    public async Task getEventsByUserId_Fail()
+    {
+        // Arrange
+        int invalidUserId = 0;
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _eventService.getEventsByUserId(invalidUserId));
+        Assert.Equal("Invalid Id", exception.Message);
+    }
+
+    [Fact]
+    // успешное получение всех мероприятий у пользователя
+    public async Task getEventsByUserId_Success()
+    {
+        // Arrange
+        int validUserId = 1;
+        var events = new List<EventRequest>
+        {
+            new EventRequest { Id = 1, Name = "Event 1" },
+            new EventRequest { Id = 2, Name = "Event 2" }
+        };
+
+        _mockRepository.Setup(repo => repo.getEventsByUserId(validUserId))
+            .ReturnsAsync(events);
+
+        // Act
+        var result = await _eventService.getEventsByUserId(validUserId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal(events, result);
+    }
     // поиск мероприятия (с пагинацией)
+    
+    [Fact]
+    // неудачный поиск мероприятия из-за нулевого поля
+    public async Task SearchEvents_Fail()
+    {
+        // Arrange
+        var model = new SearchDTO { Date = new DateTime(), Name = string.Empty };
+        int page = 1;
+        int pageSize = 10;
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _eventService.SearchEvents(model, page, pageSize));
+        Assert.Equal("Date or Name is required", exception.Message);
+    }
+
+    [Fact]
+    // успешный поиск мероприятия
+    public async Task SearchEvents_Success()
+    {
+        // Arrange
+        var model = new SearchDTO { Date = DateTime.Now, Name = "Test Event" };
+        int page = 1;
+        int pageSize = 10;
+
+        var events = new List<EventRequest>
+        {
+            new EventRequest { Id = 1, Name = "Test Event 1" },
+            new EventRequest { Id = 2, Name = "Test Event 2" }
+        };
+
+        _mockRepository.Setup(repo => repo.SearchEvents(model, page, pageSize))
+            .ReturnsAsync(events);
+
+        // Act
+        var result = await _eventService.SearchEvents(model, page, pageSize);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal(events, result);
+    }
     
 }
