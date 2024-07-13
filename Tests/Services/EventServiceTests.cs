@@ -500,8 +500,8 @@ public class EventServiceTests
     public async Task SearchEvents_Fail()
     {
         // Arrange
-        var model = new SearchDTO { Date = new DateTime(), Name = string.Empty };
-        int page = 1;
+        var model = new SearchDTO { Date = new DateTime(), Name = null };
+        int page = -1;
         int pageSize = 10;
 
         // Act & Assert
