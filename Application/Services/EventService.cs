@@ -138,7 +138,8 @@ public class EventService : IEventService
 
     public async Task<List<EventRequest>> SearchEvents(SearchDTO model,int page, int pageSize)
     {
-        if(model.Date == null && string.IsNullOrEmpty(model.Name))
+        
+        if(model.Date == new DateTime() && string.IsNullOrEmpty(model.Name))
         {
             throw new Exception("Date or Name is required");
         }

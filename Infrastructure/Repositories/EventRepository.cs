@@ -28,6 +28,7 @@ namespace EventManagement.Infrastructure.Repositories
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
+        
 
         public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page,int pageSize)
         {
@@ -90,7 +91,12 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task AddEventAsync(EventDTO newEvent)
         {
-            if (newEvent == null)
+            if (newEvent == null ||
+                string.IsNullOrEmpty(newEvent.Name) ||
+                string.IsNullOrEmpty(newEvent.Location) ||
+                string.IsNullOrEmpty(newEvent.Category) ||
+                string.IsNullOrEmpty(newEvent.Description)
+                )
             {
                 throw new ArgumentNullException(nameof(newEvent), "Event is null");
             }
