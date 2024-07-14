@@ -14,24 +14,30 @@ namespace EventManagement.Infrastructure.Repositories
     public class ParticipantRepository : IParticipantRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         
-        public ParticipantRepository(ApplicationDbContext context, IUnitOfWork unitOfWork, IMapper mapper)
+        public ParticipantRepository(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
-            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task RegisterParticipantToEventAsync(int eventId, int participantId)
         {
+            var eventV = await _context.Events.FindAsync(eventId);
+            var participant = await _context.Participants.FindAsync(participantId);
+
+            if (eventV == null || participant == null)
+            {
+                throw new InvalidOperationException("user or event not found");
+            }
+            
             _context.EventParticipants.Add(new EventParticipant
             {
                 EventId = eventId,
                 ParticipantId = participantId
             });
-            await _unitOfWork.CompleteAsync(); // Сохраняем изменения в базе данных через UnitOfWork
+            await _context.SaveChangesAsync(); 
         }
 
         public async Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(int eventId)
@@ -55,7 +61,11 @@ namespace EventManagement.Infrastructure.Repositories
             if (eventParticipant != null)
             {
                 _context.EventParticipants.Remove(eventParticipant);
-                await _unitOfWork.CompleteAsync(); // Сохраняем изменения в базе данных через UnitOfWork
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException();
             }
         }
         
@@ -107,6 +117,7 @@ namespace EventManagement.Infrastructure.Repositories
         {
             var user = await _context.Participants
                 .FirstOrDefaultAsync(p => p.Email == email);
+            if(user == null) throw new Exception("User Not Found");
             return new LoginModel
             {
                 Email = user.Email,
