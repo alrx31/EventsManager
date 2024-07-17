@@ -26,7 +26,7 @@ public class EventService : IEventService
     {
         if(page < 1 || pageSize < 1)
         {
-            throw new Exception("Invalid page or pageSize");
+            throw new ArgumentOutOfRangeException("Invalid page or pageSize");
         }
         
         var events = await _eventRepository.GetAllEventsAsync(page,pageSize);
@@ -53,10 +53,14 @@ public class EventService : IEventService
     
     public async Task<EventRequest> GetEventByIdAsyncRequest(int id)
     {
+        if (id <= 0)
+        {
+            throw new ArgumentOutOfRangeException("Invalid event ID");
+        }
         var eventById = await _eventRepository.GetEventByIdAsyncRequest(id);
         if(eventById == null)
         {
-            throw new Exception("Event not found");
+            throw new InvalidOperationException("Event not found");
         }
         return eventById;
     }
@@ -65,36 +69,18 @@ public class EventService : IEventService
     {
         if(string.IsNullOrEmpty(name))
         {
-            throw new Exception("Name is null");
+            throw new ArgumentNullException("Name is null");
         }
         var eventByName = await _eventRepository.GetEventByNameAsync(name);
         if(eventByName == null)
         {
-            throw new Exception("Event not found");
+            throw new InvalidOperationException("Event not found");
         }
         return eventByName;
     }
     
     public async Task AddEventAsync(EventDTO newEvent)
-    {
-        if(newEvent == null)
-        {
-            throw new Exception("Event is null");
-        }
-        // check all required fields
-        if(string.IsNullOrEmpty(newEvent.Name) ||
-           string.IsNullOrEmpty(newEvent.Description) ||
-           string.IsNullOrEmpty(newEvent.Category) ||
-           string.IsNullOrEmpty(newEvent.Location) ||
-           newEvent.MaxParticipants < 1 ||
-           newEvent.Date == null ||
-            newEvent.ImageData == null           
-           
-           )
-        {
-            throw new Exception("Required fields are empty");
-        }
-
+    {        
         await _eventRepository.AddEventAsync(newEvent);
         await _unitOfWork.CompleteAsync();
 
@@ -102,10 +88,7 @@ public class EventService : IEventService
     
     public async Task UpdateEventAsync(int eventId,EventDTO updatedEvent)
     {
-        if(updatedEvent == null || eventId < 1)
-        {
-            throw new Exception("Event is null");
-        }
+        await _eventRepository.GetEventByIdAsync(eventId);
         await _eventRepository.UpdateEventAsync(eventId,updatedEvent);
         await _unitOfWork.CompleteAsync();
     }

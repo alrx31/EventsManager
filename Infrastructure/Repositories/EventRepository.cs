@@ -56,10 +56,7 @@ namespace EventManagement.Infrastructure.Repositories
         
         public async Task<EventRequest> GetEventByIdAsyncRequest(int id)
         {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id), "Invalid event ID");
-            }
+            
             var e = await _dbContext.Events.FindAsync(id);
 
             return new EventRequest
@@ -73,30 +70,17 @@ namespace EventManagement.Infrastructure.Repositories
                 MaxParticipants = e.MaxParticipants,
                 ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
 
-            }?? throw new InvalidOperationException("Event not found");
+            };
         }
 
         public async Task<Event> GetEventByNameAsync(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentNullException(nameof(name), "Event name cannot be null or empty");
-            }
-            var @return = await _dbContext.Events.FirstOrDefaultAsync(e => e.Name == name);
-            return @return ?? throw new InvalidOperationException("Event not found");
+            return await _dbContext.Events.FirstOrDefaultAsync(e => e.Name == name);
+            
         }
 
         public async Task AddEventAsync(EventDTO newEvent)
         {
-            if (newEvent == null ||
-                string.IsNullOrEmpty(newEvent.Name) ||
-                string.IsNullOrEmpty(newEvent.Location) ||
-                string.IsNullOrEmpty(newEvent.Category) ||
-                string.IsNullOrEmpty(newEvent.Description)
-                )
-            {
-                throw new ArgumentNullException(nameof(newEvent), "Event is null");
-            }
 
             var newEventEntity = _mapper.Map<Event>(newEvent);
             newEventEntity.EventParticipants = new List<EventParticipant>();
@@ -106,14 +90,12 @@ namespace EventManagement.Infrastructure.Repositories
                 using var memoryStream = new MemoryStream();
                 await newEvent.ImageData.CopyToAsync(memoryStream);
 
-                // Проверяем, что memoryStream содержит данные
                 if (memoryStream.Length > 0)
                 {
                     newEventEntity.ImageData = memoryStream.ToArray();
                 }
                 else
                 {
-                    // Выводим сообщение об ошибке или выполняем другие действия
                     Console.WriteLine("Ошибка: Пустой поток данных.");
                 }
             }
@@ -124,56 +106,30 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task UpdateEventAsync(int eventId,EventDTO updatedEvent)
         {
-            if (updatedEvent == null)
-            {
-                throw new ArgumentNullException(nameof(updatedEvent), "Event is null");
-            }
+            
             
             var eventToUpdate = await GetEventByIdAsync(eventId);
             
-            if (eventToUpdate == null)
-            {
-                throw new InvalidOperationException("Event not found");
-            }
-
+            // update all field
+            eventToUpdate.Name = updatedEvent.Name;
+            eventToUpdate.Description = updatedEvent.Description;
+            eventToUpdate.Location = updatedEvent.Location;
+            eventToUpdate.Category = updatedEvent.Category;
+            eventToUpdate.Date = (DateTime)updatedEvent.Date;
+            eventToUpdate.MaxParticipants = (int)updatedEvent.MaxParticipants;
             
-            if(!String.IsNullOrEmpty(updatedEvent.Name))
-            {
-                eventToUpdate.Name = updatedEvent.Name;
-            }
-            if(!String.IsNullOrEmpty(updatedEvent.Description))
-            {
-                eventToUpdate.Description = updatedEvent.Description;
-            }
-            if(!String.IsNullOrEmpty(updatedEvent.Location))
-            {
-                eventToUpdate.Location = updatedEvent.Location;
-            }
-            if(!String.IsNullOrEmpty(updatedEvent.Category))
-            {
-                eventToUpdate.Category = updatedEvent.Category;
-            }
-            if(updatedEvent.Date != null)
-            {
-                eventToUpdate.Date = updatedEvent.Date ?? new DateTime();
-            }
-            if(updatedEvent.MaxParticipants != null)
-            {
-                eventToUpdate.MaxParticipants = updatedEvent.MaxParticipants ?? 0;
-            }
-            if (updatedEvent.ImageData != null && updatedEvent.ImageData.Length > 0)
+
+            if (updatedEvent.ImageData.Length > 0)
             {
                 using var memoryStream = new MemoryStream();
                 await updatedEvent.ImageData.CopyToAsync(memoryStream);
 
-                // Проверяем, что memoryStream содержит данные
                 if (memoryStream.Length > 0)
                 {
                     eventToUpdate.ImageData = memoryStream.ToArray();
                 }
                 else
                 {
-                    // Выводим сообщение об ошибке или выполняем другие действия
                     Console.WriteLine("Ошибка: Пустой поток данных.");
                 }
             }
@@ -266,12 +222,12 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task<int> GetCountEventsSearch(SearchDTO model)
         {
-           return await _dbContext.Events.CountAsync(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
+            return await _dbContext.Events.CountAsync(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
         }
 
         public async Task<int> GetCountEventsFilter(EventCriteria model)
         {
-           return await _dbContext.Events.CountAsync(e =>(string.IsNullOrEmpty(model.Location) || e.Location == model.Location) && (string.IsNullOrEmpty(model.Category) || e.Category == model.Category));
+            return await _dbContext.Events.CountAsync(e =>(string.IsNullOrEmpty(model.Location) || e.Location == model.Location) && (string.IsNullOrEmpty(model.Category) || e.Category == model.Category));
         }
         
         

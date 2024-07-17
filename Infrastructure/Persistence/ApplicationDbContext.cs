@@ -22,6 +22,8 @@ public class ApplicationDbContext:DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Event>().HasKey(e=>e.Id);
+        modelBuilder.Entity<Event>().Property(e => e.Id).ValueGeneratedOnAdd();
         modelBuilder.Entity<EventParticipant>()
             .HasOne(ep => ep.Event)
             .WithMany(e => e.EventParticipants)

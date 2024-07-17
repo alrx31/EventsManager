@@ -2,10 +2,12 @@ using System.Text;
 using API.Middlewares;
 using EventManagement.Application;
 using EventManagement.Application.Services;
+using EventManagement.Application.Validators;
 using EventManagement.Domain;
 using EventManagement.Infrastructure;
 using EventManagement.Infrastructure.Persistence;
 using EventManagement.Infrastructure.Repositories;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
+builder.Services.AddControllers();
+builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<EventDTOValidator>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

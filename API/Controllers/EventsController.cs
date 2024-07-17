@@ -25,10 +25,6 @@ namespace API.Controllers
 
         public async Task<IActionResult> GetAllEvents([FromRoute] int page,int pageSize)
         {
-            if (page < 1 || pageSize < 1)
-            {
-                return BadRequest();
-            }
             var events = await _eventService.GetAllEventsAsync(page,pageSize);
             if (events == null)
                 return NotFound();
@@ -41,9 +37,6 @@ namespace API.Controllers
         public async Task<IActionResult> GetEventById(int id)
         {
             var eventById = await _eventService.GetEventByIdAsyncRequest(id);
-            if (eventById == null)
-                return NotFound();
-
             return Ok(eventById);
         }
 
@@ -53,8 +46,6 @@ namespace API.Controllers
         public async Task<IActionResult> GetEventByName(string name)
         {
             var eventByName = await _eventService.GetEventByNameAsync(name);
-            if (eventByName == null)
-                return NotFound();
 
             return Ok(eventByName);
         }
@@ -64,9 +55,11 @@ namespace API.Controllers
         [HttpPost("create-event")]
         public async Task<IActionResult> AddEvent([FromForm] EventDTO newEvent)
         {
+            // fluent validation
+            Console.WriteLine(newEvent);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
+            
             await _eventService.AddEventAsync(newEvent);
             return Ok();
         }
