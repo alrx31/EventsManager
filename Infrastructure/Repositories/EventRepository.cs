@@ -102,8 +102,6 @@ namespace EventManagement.Infrastructure.Repositories
             }
 
             var newEventEntity = _mapper.Map<Event>(newEvent);
-            var lastEventId = await GetLastEventId();
-            newEventEntity.Id = lastEventId + 1;
             newEventEntity.EventParticipants = new List<EventParticipant>();
 
             if (newEvent.ImageData != null && newEvent.ImageData.Length > 0)
@@ -277,13 +275,6 @@ namespace EventManagement.Infrastructure.Repositories
         public async Task<int> GetCountEventsFilter(EventCriteria model)
         {
            return await _dbContext.Events.CountAsync(e =>(string.IsNullOrEmpty(model.Location) || e.Location == model.Location) && (string.IsNullOrEmpty(model.Category) || e.Category == model.Category));
-        }
-
-        
-        
-        private async Task<int> GetLastEventId()
-        {
-            return  await _dbContext.Events.AnyAsync() ? await _dbContext.Events.MaxAsync(e => e.Id) : 0;
         }
         
         

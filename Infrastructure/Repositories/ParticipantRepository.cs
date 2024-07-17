@@ -86,7 +86,6 @@ namespace EventManagement.Infrastructure.Repositories
             participant.IsAdmin = participant.FirstName == "admin";
             
             
-            participant.Id = await getLastParticipantId() + 1;
             participant.EventParticipants = new List<EventParticipant>();
             participant.Password = GetHash(user.Password);
             await _context.Participants.AddAsync(participant);
@@ -94,10 +93,6 @@ namespace EventManagement.Infrastructure.Repositories
         
         
         
-        private async Task<int> getLastParticipantId()
-        {
-            return await _context.Participants.AnyAsync()? await _context.Participants.MaxAsync(p => p.Id) : 0;
-        }
         
         
         
@@ -160,7 +155,6 @@ namespace EventManagement.Infrastructure.Repositories
                 Email = user.Email,
                 RefreshToken = "",
                 RefreshTokenExpiryTime = DateTime.UtcNow,
-                Id = await GetLastTokenId() + 1,
                 ParticipantId = await _context.Participants
                     .Where(p => p.Email == user.Email)
                     .Select(p => p.Id)
@@ -187,13 +181,7 @@ namespace EventManagement.Infrastructure.Repositories
             return Encoding.ASCII.GetString(data);
         }
 
-        private async Task<int> GetLastTokenId()
-        {
-            var token = await _context.ExtendedIdentityUsers
-                .OrderByDescending(u => u.Id)
-                .FirstOrDefaultAsync();
-            return token != null? token.Id : 0;
-        }
+        
         
     }
 }
