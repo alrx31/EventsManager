@@ -69,8 +69,7 @@ public class JwtService:IJwtService
         }
         catch (SecurityTokenExpiredException)
         {
-            Console.WriteLine("Token has expired.");
-            return null;
+            throw new SecurityTokenExpiredException();
         }
         catch (Exception ex)
         {
