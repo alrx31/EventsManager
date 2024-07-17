@@ -9,9 +9,6 @@ using EventManagement.Application.Models;
 using EventManagement.Domain;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 

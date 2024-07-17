@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using EventManagement.Application.Models;
 using EventManagement.Infrastructure;
 using EventManagement.Infrastructure.Repositories;
+using EventManagement.Domain;
 
 namespace EventManagement.Application.Services;
 

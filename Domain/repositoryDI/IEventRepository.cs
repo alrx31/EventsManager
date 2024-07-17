@@ -4,7 +4,7 @@ using EventManagement.Application.Models;
 using EventManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
-namespace EventManagement.Infrastructure.Repositories
+namespace EventManagement.Domain
 {
     public interface IEventRepository
     {

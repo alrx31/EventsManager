@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EventManagement.Application.Models;
 using EventManagement.Application.Services;
+using EventManagement.Domain;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure;
 using EventManagement.Infrastructure.Repositories;

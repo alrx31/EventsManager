@@ -2,7 +2,7 @@
 using EventManagement.Application.Models;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure;
-using EventManagement.Infrastructure.Repositories;
+using EventManagement.Domain;
 using Microsoft.AspNetCore.Http;
 using Moq;
 
