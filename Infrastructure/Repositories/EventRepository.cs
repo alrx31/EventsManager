@@ -125,7 +125,6 @@ namespace EventManagement.Infrastructure.Repositories
 
             await _dbContext.Events.AddAsync(newEventEntity);
 
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task UpdateEventAsync(int eventId,EventDTO updatedEvent)
@@ -185,7 +184,6 @@ namespace EventManagement.Infrastructure.Repositories
             }
             
             _dbContext.Events.Update(eventToUpdate);
-            await _dbContext.SaveChangesAsync(); // Сохраняем изменения в базе данных
         }
 
         public async Task DeleteEventAsync(int id)
@@ -197,7 +195,6 @@ namespace EventManagement.Infrastructure.Repositories
             }
 
             _dbContext.Events.Remove(eventToDelete);
-            await _dbContext.SaveChangesAsync(); // Сохраняем изменения в базе данных
         }
         
 

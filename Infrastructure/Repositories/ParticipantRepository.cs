@@ -37,7 +37,6 @@ namespace EventManagement.Infrastructure.Repositories
                 EventId = eventId,
                 ParticipantId = participantId
             });
-            await _context.SaveChangesAsync(); 
         }
 
         public async Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(int eventId)
@@ -61,7 +60,6 @@ namespace EventManagement.Infrastructure.Repositories
             if (eventParticipant != null)
             {
                 _context.EventParticipants.Remove(eventParticipant);
-                await _context.SaveChangesAsync();
             }
             else
             {
@@ -92,7 +90,6 @@ namespace EventManagement.Infrastructure.Repositories
             participant.EventParticipants = new List<EventParticipant>();
             participant.Password = GetHash(user.Password);
             await _context.Participants.AddAsync(participant);
-            await _context.SaveChangesAsync();
         }
         
         
@@ -171,7 +168,6 @@ namespace EventManagement.Infrastructure.Repositories
                 Participant = null
             };
             await _context.ExtendedIdentityUsers.AddAsync(newToken);
-            await _context.SaveChangesAsync();
         }
 
 
@@ -181,7 +177,6 @@ namespace EventManagement.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.ParticipantId == userId);
             if (user != null) user.RefreshTokenExpiryTime = DateTime.UtcNow;
             else throw new Exception("User Not Found");
-            await _context.SaveChangesAsync();
         }
 
 
