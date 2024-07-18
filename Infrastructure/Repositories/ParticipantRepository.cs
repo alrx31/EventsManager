@@ -109,7 +109,6 @@ namespace EventManagement.Infrastructure.Repositories
         {
             var user = await _context.Participants
                 .FirstOrDefaultAsync(p => p.Email == email);
-            if(user == null) throw new Exception("User Not Found");
             return new LoginModel
             {
                 Email = user.Email,
@@ -149,7 +148,6 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task AddRefreshTokenField(ParticipantRegisterDTO user)
         {
-            if(user == null) throw new Exception("Invalid User");
             var newToken = new ExtendedIdentityUser
             {
                 Email = user.Email,

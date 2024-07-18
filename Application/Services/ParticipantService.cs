@@ -27,14 +27,6 @@ public class ParticipantService:IParticipantService
 
     public async Task RegisterParticipantAsync(ParticipantRegisterDTO user)
     {
-        // check all fields
-        if (string.IsNullOrEmpty(user.FirstName)) throw new Exception("Invalid First Name");
-        if (string.IsNullOrEmpty(user.LastName)) throw new Exception("Invalid Last Name");
-        if (user.BirthDate == null) throw new Exception("Invalid Birth Date");
-        if (user.RegistrationDate == null) throw new Exception("Invalid Registration Date");
-        if (string.IsNullOrEmpty(user.Email)) throw new Exception("Invalid Email");
-        if (string.IsNullOrEmpty(user.Password)) throw new Exception("Invalid Password");
-        
         await _participantRepository.RegisterParticipantAsync(user);
         await _participantRepository.AddRefreshTokenField(user);
         await _unitOfWork.CompleteAsync();

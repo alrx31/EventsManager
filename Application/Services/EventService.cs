@@ -98,7 +98,7 @@ public class EventService : IEventService
         var eventById = await _eventRepository.GetEventByIdAsync(id);
         if(eventById == null)
         {
-            throw new Exception("Event not found");
+            throw new InvalidOperationException("Event not found");
         }
         await _eventRepository.DeleteEventAsync(id);
         await _unitOfWork.CompleteAsync();
@@ -109,8 +109,19 @@ public class EventService : IEventService
     {
         if(criteria == null)
         {
-            throw new Exception("Criteria is null");
+            throw new ArgumentNullException("Criteria is null");
         }
+        if(page < 1 || pageSize < 1)
+        {
+            throw new ArgumentOutOfRangeException("Invalid page or pageSize");
+        }
+        if(string.IsNullOrEmpty(criteria.Location) && string.IsNullOrEmpty(criteria.Category))
+        {
+            throw new Exception("Date, Location or Category is required");
+        }
+        
+        
+        
         return await _eventRepository.GetEventsByCriteriaAsync(criteria, page, pageSize);
     }
 
@@ -122,6 +133,14 @@ public class EventService : IEventService
 
     public async Task<List<EventRequest>> SearchEvents(SearchDTO model,int page, int pageSize)
     {
+        if(model == null)
+        {
+            throw new ArgumentNullException("Model is null");
+        }
+        if(page < 1 || pageSize < 1)
+        {
+            throw new ArgumentOutOfRangeException("Invalid page or pageSize");
+        }
         
         if(model.Date == new DateTime() && string.IsNullOrEmpty(model.Name))
         {

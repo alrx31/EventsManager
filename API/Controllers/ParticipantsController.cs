@@ -34,9 +34,6 @@ public class ParticipantsController:ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginModel model)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var loginRes = await _authService.Login(model);
         if (loginRes.IsLoggedIn) return Ok(loginRes);
         return Unauthorized();
@@ -45,9 +42,6 @@ public class ParticipantsController:ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken(RefreshTokenModel model)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var loginRes = await _authService.RefreshToken(model);
         if (loginRes.IsLoggedIn) return Ok(loginRes);
         return Unauthorized();
@@ -58,10 +52,6 @@ public class ParticipantsController:ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout([FromBody] LogoutModel model)
     {
-        if(!ModelState.IsValid)
-            return BadRequest(ModelState);
-        if(model.UserId == 0 || string.IsNullOrEmpty(model.Token))
-            return BadRequest("Invalid token or user id");
         await _authService.Logout(model);
         return Ok();
     }

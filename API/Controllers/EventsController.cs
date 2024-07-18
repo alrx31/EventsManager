@@ -92,9 +92,6 @@ namespace API.Controllers
         [HttpPost("filter&page={page}&pageSize={pageSize}")]
         public async Task<IActionResult> FilterEvents([FromBody] EventCriteria criteria,int page,int pageSize)
         {
-            if (criteria == null)
-                return BadRequest("Criteria is null");
-
             var events = await _eventService.GetEventsByCriteriaAsync(criteria,page,pageSize);
             return Ok(events);
         }
@@ -106,7 +103,6 @@ namespace API.Controllers
         [HttpGet("user-events/{UserId}")]
         public async Task<IActionResult> GetEventsFromUser(int UserId)
         {
-            if (UserId < 1) throw new Exception("Invalid User Id");
             var events = await _eventService.getEventsByUserId(UserId);
             return Ok(events);
         }
@@ -115,10 +111,6 @@ namespace API.Controllers
         [HttpPost("search&page={page}&pageSize={pageSize}")]
         public async Task<IActionResult> SearchEvents([FromBody] SearchDTO model,[FromRoute] int page,int pageSize)
         {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-            if(model.Date == null && string.IsNullOrEmpty(model.Name))
-                return BadRequest("Date or Name is required");
             var events = await _eventService.SearchEvents(model,page,pageSize);
             return Ok(events);
         }
@@ -127,7 +119,6 @@ namespace API.Controllers
         [HttpPost("search/count")]
         public async Task<IActionResult> getCountEventsSearch([FromBody] SearchDTO model)
         {
-            if (!ModelState.IsValid) return BadRequest();
             var count = await _eventService.GetCountEventsSearch(model);
             if (count > -1)
             {

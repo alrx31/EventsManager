@@ -140,22 +140,12 @@ namespace EventManagement.Infrastructure.Repositories
         public async Task DeleteEventAsync(int id)
         {
             var eventToDelete = await GetEventByIdAsync(id);
-            if (eventToDelete == null)
-            {
-                throw new InvalidOperationException("Event not found");
-            }
-
             _dbContext.Events.Remove(eventToDelete);
         }
         
 
         public async Task<List<EventRequest>> GetEventsByCriteriaAsync(EventCriteria criteria,int page,int pageSize)
         {
-            if (criteria == null)
-            {
-                throw new ArgumentNullException(nameof(criteria), "Criteria is null");
-            }
-
             IQueryable<Event> query = _dbContext.Events;
             
 
@@ -184,7 +174,6 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task<List<EventRequest>> getEventsByUserId(int id)
         {
-            if (id < 1) throw new Exception("invalid Id");
             return  await _dbContext.Events.Where(e => e.EventParticipants.Any(ep => ep.ParticipantId == id))
                 .Select(e => new EventRequest
                 {
