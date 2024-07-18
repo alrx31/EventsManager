@@ -22,7 +22,15 @@ public class ApplicationDbContext:DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Event>().HasKey(e=>e.Id);
+        var configuration = new ApplicationDbContextConfiguration();
+        
+        modelBuilder.ApplyConfiguration<Event>(configuration);
+        modelBuilder.ApplyConfiguration<EventParticipant>(configuration);
+        modelBuilder.ApplyConfiguration<ExtendedIdentityUser>(configuration);
+
+        base.OnModelCreating(modelBuilder);
+        
+        /*modelBuilder.Entity<Event>().HasKey(e=>e.Id);
         modelBuilder.Entity<Event>().Property(e => e.Id).ValueGeneratedOnAdd();
         modelBuilder.Entity<EventParticipant>()
             .HasOne(ep => ep.Event)
@@ -36,6 +44,6 @@ public class ApplicationDbContext:DbContext
         modelBuilder.Entity<ExtendedIdentityUser>()
             .HasOne(ex=>ex.Participant)
             .WithMany(p=>p.IdentityUsers)
-            .HasForeignKey(e=>e.ParticipantId);
+            .HasForeignKey(e=>e.ParticipantId);*/
     }
 }

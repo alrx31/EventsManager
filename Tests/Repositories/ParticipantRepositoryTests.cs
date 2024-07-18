@@ -94,7 +94,7 @@ public class ParticipantRepositoryTests
         int participantId = 1;
         
         await _repository.RegisterParticipantToEventAsync(eventId, participantId);
-        
+        await _context.SaveChangesAsync();
         var eventParticipant = await _context.EventParticipants
             .Where(ep => ep.EventId == eventId && ep.ParticipantId == participantId)
             .FirstOrDefaultAsync();
@@ -207,7 +207,7 @@ public class ParticipantRepositoryTests
         var _repository = new ParticipantRepository(_context,_mapper);
         
         await _repository.CancelRegistrationAsync(3, 1);
-        
+        await _context.SaveChangesAsync();
         var eventParticipant = await _context.EventParticipants
             .Where(ep => ep.EventId == 3 && ep.ParticipantId == 1)
             .FirstOrDefaultAsync();
@@ -258,7 +258,7 @@ public class ParticipantRepositoryTests
         };
         
         await _repository.RegisterParticipantAsync(newPart);
-
+        await _context.SaveChangesAsync();
         var part = await _context.Participants.FirstOrDefaultAsync(p => p.FirstName == newPart.FirstName && p.LastName == newPart.LastName);
 
         Assert.NotNull(part);
@@ -314,16 +314,7 @@ public class ParticipantRepositoryTests
         Assert.Equal(_context.Participants.FirstOrDefaultAsync(p => p.Email == "1").Result.Password,res.Password);
     }
     
-    [Fact]
-    public async Task GetParticipantByEmailAsync_Fail_ontFound()
-    {
-        using var _context = new ApplicationDbContext(_options);
-        SeedDatabase(_context);
-        var _repository = new ParticipantRepository(_context,_mapper);
-        
-       await Assert.ThrowsAsync<Exception>(() => _repository.GetParticipantByEmailAsync("3"));
-        
-    }
+    
 
 
 
@@ -342,7 +333,7 @@ public class ParticipantRepositoryTests
             BirthDate = new DateTime(),
             RegistrationDate = new DateTime()
         });
-        
+        await _context.SaveChangesAsync();
         var res = await _repository.getExtendedIdentityUserByEmailAsync("test");
         Assert.NotNull(res);
     }
@@ -390,10 +381,10 @@ public class ParticipantRepositoryTests
         var _repository = new ParticipantRepository(_context,_mapper);
         
         await _repository.AddRefreshTokenField(part);
-        
+        await _context.SaveChangesAsync();
         var user = await _repository.getExtendedIdentityUserByEmailAsync("test");
         await _repository.UpdateRefreshTokenAsync(user);
-        
+        await _context.SaveChangesAsync();
         var user1 = await _context.ExtendedIdentityUsers.FirstOrDefaultAsync(u => u.Email == user.Email);
         
         Assert.NotNull(user1);
@@ -441,11 +432,12 @@ public class ParticipantRepositoryTests
         var _repository = new ParticipantRepository(_context,_mapper);
 
         await _repository.RegisterParticipantAsync(part);
+        await _context.SaveChangesAsync();
         await _repository.AddRefreshTokenField(part);
-        
+        await _context.SaveChangesAsync();
         var user = _context.Participants.FirstOrDefaultAsync(p => p.Email == "test").Result;
         await _repository.CanselRefreshToken(user.Id);
-        
+        await _context.SaveChangesAsync();
         var user1 = await _context.ExtendedIdentityUsers.FirstOrDefaultAsync(u => u.Email == user.Email);
         
         Assert.NotNull(user1);

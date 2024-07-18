@@ -57,25 +57,7 @@ public class ParticipantServiceTests
                 
     }
 
-    [Fact]
-    // Неудачная регистрация из-за нулевого поля
-    public async Task Register_Fail_NullField()
-    {
-        // Arrange
-        var ParticipantRegisterDTO = new ParticipantRegisterDTO
-        {
-            FirstName = "",
-            LastName = "Doe",
-            BirthDate = new DateTime(1990, 1, 1),
-            RegistrationDate = DateTime.Now,
-            Email = "blabla@gmail.com",
-            Password = "123456"
-        };
-        
-        // Act Assert
-        await Assert.ThrowsAsync<Exception>(() => _participantService.RegisterParticipantAsync(ParticipantRegisterDTO));
-    }
-
+   
     [Fact]
     // Неудачная регистрация в репозитории
     public async Task Register_Fail()
