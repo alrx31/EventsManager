@@ -22,55 +22,28 @@ namespace EventManagement.Infrastructure.Repositories
 
         public EventRepository(ApplicationDbContext dbContext,IMapper mapper)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
         
 
         public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page,int pageSize)
         {
             var datas =  await _dbContext.Events.ToListAsync();
-            return datas.Skip((page-1)*pageSize).Take(pageSize).Select(e => new EventRequest
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                Location = e.Location,
-                Category = e.Category,
-                Date = e.Date,
-                MaxParticipants = e.MaxParticipants,
-                ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
-            });
+            return datas.Skip((page-1)*pageSize).Take(pageSize).Select(e => _mapper.Map<EventRequest>(e));
         }
 
         public async Task<Event> GetEventByIdAsync(int id)
         {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id), "Invalid event ID");
-            }
-            var eventById = await _dbContext.Events.FindAsync(id);
-
-            return eventById ?? throw new InvalidOperationException("Event not found");
+            return await _dbContext.Events.FindAsync(id);
         }
         
         public async Task<EventRequest> GetEventByIdAsyncRequest(int id)
         {
             
             var e = await _dbContext.Events.FindAsync(id);
-
-            return new EventRequest
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                Location = e.Location,
-                Category = e.Category,
-                Date = e.Date,
-                MaxParticipants = e.MaxParticipants,
-                ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
-
-            };
+            return _mapper.Map<EventRequest>(e);;
+            
         }
 
         public async Task<Event> GetEventByNameAsync(string name)
@@ -159,49 +132,19 @@ namespace EventManagement.Infrastructure.Repositories
                 query = query.Where(e => e.Category == criteria.Category);
             }
 
-            return await query.Skip((page-1)*pageSize).Take(pageSize).Select(e=> new EventRequest
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                Location = e.Location,
-                Category = e.Category,
-                Date = e.Date,
-                MaxParticipants = e.MaxParticipants,
-                ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
-            }).ToListAsync();
+            return await query.Skip((page-1)*pageSize).Take(pageSize).Select(e=> _mapper.Map<EventRequest>(e)).ToListAsync();
         }
 
         public async Task<List<EventRequest>> getEventsByUserId(int id)
         {
             return  await _dbContext.Events.Where(e => e.EventParticipants.Any(ep => ep.ParticipantId == id))
-                .Select(e => new EventRequest
-                {
-                    Id = e.Id,
-                    Name = e.Name,
-                    Description = e.Description,
-                    Location = e.Location,
-                    Category = e.Category,
-                    Date = e.Date,
-                    MaxParticipants = e.MaxParticipants,
-                    ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
-                }).ToListAsync();
+                .Select(e => _mapper.Map<EventRequest>(e)).ToListAsync();
         }
 
         public async Task<List<EventRequest>> SearchEvents(SearchDTO model,int page,int pageSize)
         {
             var events = _dbContext.Events.Where(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
-            return await events.Skip((page-1)*pageSize).Take(pageSize).Select(e=> new EventRequest
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                Location = e.Location,
-                Category = e.Category,
-                Date = e.Date,
-                MaxParticipants = e.MaxParticipants,
-                ImageSrc = e.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(e.ImageData)}" : null
-            }).ToListAsync();
+            return await events.Skip((page-1)*pageSize).Take(pageSize).Select(e=>_mapper.Map<EventRequest>(e)).ToListAsync();
         }
 
         public async Task<int> GetCountEvents()

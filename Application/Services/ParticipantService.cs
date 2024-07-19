@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using EventManagement.Application.Models;
 using EventManagement.Application.Services;
 using EventManagement.Domain.Entities;
+using EventManagement.Middlewares;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -28,44 +29,46 @@ public class ParticipantService:IParticipantService
     public async Task RegisterParticipantAsync(ParticipantRegisterDTO user)
     {
         await _participantRepository.RegisterParticipantAsync(user);
+        await _unitOfWork.CompleteAsync();
         await _participantRepository.AddRefreshTokenField(user);
         await _unitOfWork.CompleteAsync();
+        
     }
 
 
     public Task RegisterParticipantToEventAsync(int eventId, int participantId)
     {
-        if (eventId < 1) throw new Exception("Invalid Event Id");
-        if (participantId < 1) throw new Exception("Invalid Participant");
+        if (eventId < 1) throw new ValidationException("Invalid Event Id");
+        if (participantId < 1) throw new ValidationException("Invalid Participant");
         return _participantRepository.RegisterParticipantToEventAsync(eventId, participantId);
     }
 
     public Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(int eventId)
     {
         var participants = _participantRepository.GetParticipantsByEventIdAsync(eventId);
-        if(participants == null) throw new Exception("No Participants Found");
+        if(participants == null) throw new NotFoundException("No Participants Found");
         return participants;
     }
 
     public Task<Participant> GetParticipantByIdAsync(int id)
     {
         var participant = _participantRepository.GetParticipantByIdAsync(id);
-        if(participant == null) throw new Exception("Participant Not Found");
+        if(participant == null) throw new NotFoundException("Participant Not Found");
         return participant;
     }
 
     public Task CancelRegistrationAsync(int eventId, int participantId)
     {
-        if(eventId < 1) throw new Exception("Invalid Event Id");
-        if(participantId < 1) throw new Exception("Invalid Participant Id");
+        if(eventId < 1) throw new ValidationException("Invalid Event Id");
+        if(participantId < 1) throw new ValidationException("Invalid Participant Id");
         return _participantRepository.CancelRegistrationAsync(eventId, participantId);
     }
 
     public Task SendEmailToParticipantAsync(int eventId, int participantId, string message)
     {
-        if(eventId < 1) throw new Exception("Invalid Event Id");
-        if(participantId < 1) throw new Exception("Invalid Participant Id");
-        if(string.IsNullOrEmpty(message)) throw new Exception("Invalid Message");
+        if(eventId < 1) throw new ValidationException("Invalid Event Id");
+        if(participantId < 1) throw new ValidationException("Invalid Participant Id");
+        if(string.IsNullOrEmpty(message)) throw new ValidationException("Invalid Message");
         return _participantRepository.SendEmailToParticipantAsync(eventId, participantId, message);
     }
     

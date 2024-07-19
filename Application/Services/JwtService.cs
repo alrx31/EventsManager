@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using EventManagement.Middlewares;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -69,7 +70,7 @@ public class JwtService:IJwtService
         }
         catch (SecurityTokenExpiredException)
         {
-            throw new SecurityTokenExpiredException();
+            throw new ValidationException("Security token has expired.");
         }
         catch (Exception ex)
         {

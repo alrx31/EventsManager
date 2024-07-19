@@ -7,6 +7,7 @@ using EventManagement.Domain;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure;
 using EventManagement.Infrastructure.Repositories;
+using EventManagement.Middlewares;
 using Microsoft.AspNetCore.Http;
 namespace EventManagement.Application;
 using Microsoft.AspNetCore.Hosting;
@@ -26,13 +27,13 @@ public class EventService : IEventService
     {
         if(page < 1 || pageSize < 1)
         {
-            throw new ArgumentOutOfRangeException("Invalid page or pageSize");
+            throw new ValidationException("Invalid page or pageSize");
         }
         
         var events = await _eventRepository.GetAllEventsAsync(page,pageSize);
         if(events == null)
         {
-            throw new Exception("No events found");
+            throw new NotFoundException("No events found");
         }
         return events;
     }
@@ -41,12 +42,12 @@ public class EventService : IEventService
     {
         if (id < 1)
         {
-            throw new Exception("Invalid Event Id");
+            throw new ValidationException("Invalid Event Id");
         }
         var eventById = await _eventRepository.GetEventByIdAsync(id);
         if(eventById == null)
         {
-            throw new Exception("Event not found");
+            throw new NotFoundException("Event not found");
         }
         return eventById;
     }
@@ -55,12 +56,12 @@ public class EventService : IEventService
     {
         if (id <= 0)
         {
-            throw new ArgumentOutOfRangeException("Invalid event ID");
+            throw new ValidationException("Invalid event ID");
         }
         var eventById = await _eventRepository.GetEventByIdAsyncRequest(id);
         if(eventById == null)
         {
-            throw new InvalidOperationException("Event not found");
+            throw new NotFoundException("Event not found");
         }
         return eventById;
     }
@@ -69,12 +70,12 @@ public class EventService : IEventService
     {
         if(string.IsNullOrEmpty(name))
         {
-            throw new ArgumentNullException("Name is null");
+            throw new ValidationException("Name is null");
         }
         var eventByName = await _eventRepository.GetEventByNameAsync(name);
         if(eventByName == null)
         {
-            throw new InvalidOperationException("Event not found");
+            throw new NotFoundException("Event not found");
         }
         return eventByName;
     }
@@ -98,7 +99,7 @@ public class EventService : IEventService
         var eventById = await _eventRepository.GetEventByIdAsync(id);
         if(eventById == null)
         {
-            throw new InvalidOperationException("Event not found");
+            throw new NotFoundException("Event not found");
         }
         await _eventRepository.DeleteEventAsync(id);
         await _unitOfWork.CompleteAsync();
@@ -109,15 +110,15 @@ public class EventService : IEventService
     {
         if(criteria == null)
         {
-            throw new ArgumentNullException("Criteria is null");
+            throw new ValidationException("Criteria is null");
         }
         if(page < 1 || pageSize < 1)
         {
-            throw new ArgumentOutOfRangeException("Invalid page or pageSize");
+            throw new ValidationException("Invalid page or pageSize");
         }
         if(string.IsNullOrEmpty(criteria.Location) && string.IsNullOrEmpty(criteria.Category))
         {
-            throw new Exception("Date, Location or Category is required");
+            throw new ValidationException("Date, Location or Category is required");
         }
         
         
@@ -127,7 +128,7 @@ public class EventService : IEventService
 
     public async Task<List<EventRequest>> getEventsByUserId(int id)
     {
-        if (id < 1) throw new Exception("Invalid Id");
+        if (id < 1) throw new ValidationException("Invalid Id");
         return await _eventRepository.getEventsByUserId(id);
     }
 
@@ -135,16 +136,16 @@ public class EventService : IEventService
     {
         if(model == null)
         {
-            throw new ArgumentNullException("Model is null");
+            throw new ValidationException("Model is null");
         }
         if(page < 1 || pageSize < 1)
         {
-            throw new ArgumentOutOfRangeException("Invalid page or pageSize");
+            throw new ValidationException("Invalid page or pageSize");
         }
         
         if(model.Date == new DateTime() && string.IsNullOrEmpty(model.Name))
         {
-            throw new Exception("Date or Name is required");
+            throw new ValidationException("Date or Name is required");
         }
         
         return await _eventRepository.SearchEvents(model,page,pageSize);

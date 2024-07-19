@@ -4,6 +4,7 @@ using EventManagement.Application.Models;
 using EventManagement.Infrastructure;
 using EventManagement.Infrastructure.Repositories;
 using EventManagement.Domain;
+using EventManagement.Middlewares;
 
 namespace EventManagement.Application.Services;
 
@@ -70,7 +71,7 @@ public class AuthService:IAuthService
     public async Task Logout(LogoutModel model)
     {
         if (model.Token == null || model.UserId <= 0)
-            throw new ArgumentException("Invalid token or user id");
+            throw new ValidationException("Invalid token or user id");
         await _participantRepository.CanselRefreshToken(model.UserId);
         await _unitOfWork.CompleteAsync();
     }

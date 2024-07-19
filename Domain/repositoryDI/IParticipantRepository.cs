@@ -15,7 +15,6 @@ public interface IParticipantRepository
 
 
     Task RegisterParticipantAsync(ParticipantRegisterDTO user);
-    Task<Participant> LoginAsync(LoginModel model);
     
     Task<LoginModel> GetParticipantByEmailAsync(string email);
     Task<int> GetParticipantIdByEmailAsync(string email);

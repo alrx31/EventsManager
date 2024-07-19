@@ -24,14 +24,8 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task RegisterParticipantToEventAsync(int eventId, int participantId)
         {
-            var eventV = await _context.Events.FindAsync(eventId);
-            var participant = await _context.Participants.FindAsync(participantId);
-
-            if (eventV == null || participant == null)
-            {
-                throw new InvalidOperationException("user or event not found");
-            }
-            
+            await _context.Events.FindAsync(eventId);
+            await _context.Participants.FindAsync(participantId);
             _context.EventParticipants.Add(new EventParticipant
             {
                 EventId = eventId,
@@ -57,14 +51,8 @@ namespace EventManagement.Infrastructure.Repositories
             var eventParticipant = await _context.EventParticipants
                 .Where(ep => ep.EventId == eventId && ep.ParticipantId == participantId)
                 .FirstOrDefaultAsync();
-            if (eventParticipant != null)
-            {
-                _context.EventParticipants.Remove(eventParticipant);
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
+            
+            _context.EventParticipants.Remove(eventParticipant);
         }
         
         // TODO: email sending logic
@@ -91,19 +79,6 @@ namespace EventManagement.Infrastructure.Repositories
             await _context.Participants.AddAsync(participant);
         }
         
-        
-        
-        
-        
-        
-        public async Task<Participant> LoginAsync(LoginModel model)
-        {
-            var user = await _context.Participants
-                .Where(p => p.Email == model.Email && p.Password == GetHash(model.Password))
-                .FirstOrDefaultAsync();
-            if(user == null) throw new Exception("Invalid Credentials");
-            return user;
-        }
 
         public async Task<LoginModel> GetParticipantByEmailAsync(string email)
         {
@@ -119,7 +94,6 @@ namespace EventManagement.Infrastructure.Repositories
         public async Task<int> GetParticipantIdByEmailAsync(string email)
         {
             var user = await _context.Participants.FirstOrDefaultAsync(p => p.Email == email);
-            if(user == null) throw new Exception("User Not Found");
             return user.Id;
         } 
 
@@ -130,19 +104,15 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task<ExtendedIdentityUser> getExtendedIdentityUserByEmailAsync(string email)
         {
-            if (string.IsNullOrEmpty(email)) throw new Exception("Invalid Email");
             var user = await _context.ExtendedIdentityUsers
                 .FirstOrDefaultAsync(u => u.Email == email);
-            if(user == null) throw new Exception("User Not Found");
             return user;
         }
 
         public async Task UpdateRefreshTokenAsync(ExtendedIdentityUser user)
         {
-            if (user == null) throw new Exception("Invalid User");
             var user1 = await _context.ExtendedIdentityUsers
                 .FirstOrDefaultAsync(u => u.Email == user.Email);
-            if(user1 == null) throw new Exception("User Not Found");
             _context.ExtendedIdentityUsers.Update(user);
         }
 
@@ -167,8 +137,7 @@ namespace EventManagement.Infrastructure.Repositories
         {
             var user = await _context.ExtendedIdentityUsers
                 .FirstOrDefaultAsync(u => u.ParticipantId == userId);
-            if (user != null) user.RefreshTokenExpiryTime = DateTime.UtcNow;
-            else throw new Exception("User Not Found");
+            user!.RefreshTokenExpiryTime = DateTime.UtcNow;
         }
 
 

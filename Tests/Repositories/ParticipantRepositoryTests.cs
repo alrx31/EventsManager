@@ -264,41 +264,7 @@ public class ParticipantRepositoryTests
         Assert.NotNull(part);
     }
 
-
-    [Fact]
-    public async Task LoginAsync_Success()
-    {
-        using var _context = new ApplicationDbContext(_options);
-        SeedDatabase(_context);
-        var _repository = new ParticipantRepository(_context,_mapper);
-        
-        var loginModel = new LoginModel
-        {
-            Email = "1",
-            Password = "as"
-        };
-        
-        var res = await _repository.LoginAsync(loginModel);
-        
-        Assert.NotNull(res);
-        Assert.Equal(_context.Participants.FirstOrDefaultAsync(p => p.Email == loginModel.Email).Result.FirstName,res.FirstName);
-    }
     
-    [Fact]
-    public async Task LoginAsync_Fail_not_found()
-    {
-        using var _context = new ApplicationDbContext(_options);
-        SeedDatabase(_context);
-        var _repository = new ParticipantRepository(_context,_mapper);
-        
-        var loginModel = new LoginModel
-        {
-            Email = "1",
-            Password = "2"
-        };
-    
-        await Assert.ThrowsAsync<Exception>(() => _repository.LoginAsync(loginModel));
-    }
 
 
     [Fact]

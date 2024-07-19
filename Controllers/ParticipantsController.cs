@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using EventManagement.Application.Models;
 using EventManagement.Application.Services;
+using EventManagement.Middlewares;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -59,6 +61,7 @@ public class ParticipantsController:ControllerBase
 
     //1. Регистрация участия пользователя в событии;+
     [HttpPut("{eventId}/register/{participantId}")]
+    
     public async Task<IActionResult> RegisterParticipantToEventAsync(int eventId, int participantId)
     {
         await _participantService.RegisterParticipantToEventAsync(eventId, participantId);
@@ -66,12 +69,13 @@ public class ParticipantsController:ControllerBase
     }
     //2. Получение списка участников события;+
     [HttpGet("{eventId}/participants")]
+    
     public async Task<IActionResult> GetParticipantsByEventIdAsync(int eventId)
     {
         var participants = await _participantService.GetParticipantsByEventIdAsync(eventId);
         if(participants == null)
         {
-            return NotFound();
+            throw new NotFoundException();
         }
         return Ok(participants);
     }
@@ -82,12 +86,13 @@ public class ParticipantsController:ControllerBase
         var participant = await _participantService.GetParticipantByIdAsync(participantId);
         if(participant == null)
         {
-            return NotFound();
+            throw new NotFoundException();
         }
         return Ok(participant);
     }
     //4. Отмена участия пользователя в событии; +
     [HttpDelete("{eventId}/cancel/{participantId}")]
+    
     public async Task<IActionResult> CancelRegistrationAsync(int eventId, int participantId)
     {
         await _participantService.CancelRegistrationAsync(eventId, participantId);

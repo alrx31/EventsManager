@@ -16,6 +16,7 @@ public class AutoMapperProfile : Profile
         CreateMap<ParticipantRegisterDTO, Participant>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.EventParticipants, opt => opt.Ignore());
-        
+        CreateMap<Event,EventRequest>()
+            .ForMember(dest => dest.ImageSrc, opt => opt.MapFrom(src => src.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(src.ImageData)}" : null));
     }
 }

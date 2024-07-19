@@ -1,5 +1,4 @@
 using System.Text;
-using API.Middlewares;
 using EventManagement.Application;
 using EventManagement.Application.Services;
 using EventManagement.Application.Validators;
@@ -7,12 +6,11 @@ using EventManagement.Domain;
 using EventManagement.Infrastructure;
 using EventManagement.Infrastructure.Persistence;
 using EventManagement.Infrastructure.Repositories;
-using FluentValidation;
+using EventManagement.Middlewares;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +31,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -52,10 +51,10 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddDistributedMemoryCache();
-
 
 builder.Services.AddCors(options =>
 {
@@ -71,7 +70,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowLocalhost3000");
+app.UseCors("AllowLocalhost3000");  // Применяем правильную политику CORS
 
 if (app.Environment.IsDevelopment())
 {
@@ -92,7 +91,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.MapControllers();
 
 app.MapFallbackToFile("index.html");

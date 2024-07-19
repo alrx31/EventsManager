@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EventManagement.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
@@ -27,11 +28,10 @@ namespace API.Controllers
         {
             var events = await _eventService.GetAllEventsAsync(page,pageSize);
             if (events == null)
-                return NotFound();
-
+                throw new NotFoundException();
             return Ok(events);
         }
-
+    
         //2. Получение определенного события по его Id;+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEventById(int id)
@@ -53,6 +53,7 @@ namespace API.Controllers
         //4. Добавление нового события;+
 
         [HttpPost("create-event")]
+        
         public async Task<IActionResult> AddEvent([FromForm] EventDTO newEvent)
         {
             // fluent validation
@@ -66,6 +67,7 @@ namespace API.Controllers
 
         // 5. Изменение информации о существующем событии;
         [HttpPut("{id}")]
+        
         public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventDTO updatedEvent)
         {
             if (!ModelState.IsValid)
@@ -81,6 +83,7 @@ namespace API.Controllers
         //6. Удаление события; +
 
         [HttpDelete("{id}")]
+        
         public async Task<IActionResult> DeleteEvent(int id)
         {
             await _eventService.DeleteEventAsync(id);
@@ -101,6 +104,7 @@ namespace API.Controllers
 
         // получение списка событий пользователя
         [HttpGet("user-events/{UserId}")]
+        
         public async Task<IActionResult> GetEventsFromUser(int UserId)
         {
             var events = await _eventService.getEventsByUserId(UserId);
