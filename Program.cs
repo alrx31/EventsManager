@@ -72,7 +72,7 @@ var app = builder.Build();
 
 app.UseCors("AllowLocalhost3000");  // Применяем правильную политику CORS
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || true)
 {
     app.UseSwagger();
     app.UseSwaggerUI();

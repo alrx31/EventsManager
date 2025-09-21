@@ -429,3 +429,13 @@
 /Shared/obj/Shared.csproj.nuget.g.props
 /Shared/obj/Shared.csproj.nuget.g.targets
 /EventManagement.sln.DotSettings.user
+**/bin/*
+**/obj/*
+DTO/obj/DTO.csproj.nuget.dgspec.json
+DTO/obj/DTO.csproj.nuget.g.props
+DTO/obj/DTO.csproj.nuget.g.targets
+DTO/obj/project.assets.json
+DTO/obj/project.nuget.cache
+DTO/obj/Debug/net8.0/DTO.assets.cache
+DTO/obj/Debug/net8.0/DTO.csproj.AssemblyReference.cache
+DTO/obj/Debug/net8.0/DTO.GeneratedMSBuildEditorConfig.editorconfig
