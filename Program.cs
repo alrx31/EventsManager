@@ -70,6 +70,36 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+var context = services.GetRequiredService<ApplicationDbContext>();
+
+const int maxRetries = 10;
+int retryCount = 0;
+
+while (true)
+{
+    try
+    {
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            context.Database.Migrate();
+        }
+        break;
+    }
+    catch (Exception ex)
+    {
+        retryCount++;
+        if (retryCount >= maxRetries)
+        {
+            throw new Exception("Exceeded max retry attempts to connect to DB", ex);
+        }
+
+        Console.WriteLine($"Retrying DB connection ({retryCount}/{maxRetries})...");
+        Thread.Sleep(2000);
+    }
+}
+
 app.UseCors("AllowLocalhost3000");  // Применяем правильную политику CORS
 
 if (app.Environment.IsDevelopment() || true)

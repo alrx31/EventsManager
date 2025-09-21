@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { config } from 'process';
 import {IAuthResponse} from "../models/AuthResponse";
 
-export const API_URL = "http://localhost:5274/api";
+export const API_URL = "https://eventsmanager-qld5.onrender.com/api";
 
 const $api = axios.create({
     withCredentials: true,
