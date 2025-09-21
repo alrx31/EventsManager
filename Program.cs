@@ -61,7 +61,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowLocalhost3000",
         builder =>
         {
-            builder.WithOrigins("http://localhost:3000")
+            builder.WithOrigins("http://localhost:3000", "https://eventsmanager-1.onrender.com", "https://eventsmanager-1.onrender.com:8080")
                    .AllowAnyHeader()
                    .AllowAnyMethod()
                    .AllowCredentials();
