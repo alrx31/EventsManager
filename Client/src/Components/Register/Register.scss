@@ -16,60 +16,77 @@ h2 {
   margin-bottom: 20px;
   font-size: 24px;
   color: var(--darkgray);
+  text-align: center;
 }
 
 .login-form {
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   background: white;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 }
+
 .register-form {
   background: white;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   box-sizing: border-box;
 }
 
 .error-form {
-  input{
-    border-color: var(--red);
+  input {
+    border-color: var(--red) !important;
     animation: error-shake 0.3s ease;
   }
-  label{
+  
+  label {
     color: var(--red);
     animation: error-shake 0.3s ease;
   }
 }
 
+.error-input {
+  border-color: var(--red) !important;
+}
+
+.error-message {
+  display: block;
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 5px;
+  margin-left: 2px;
+  font-weight: 500;
+}
+
 @keyframes error-shake {
-  0%{
-  transform: translateX(0);
+  0% {
+    transform: translateX(0);
   }
-    25% {
-      transform: translateX(-10px);
-    }
-    50% {
-      transform: translateX(10px);
-    }
-    75% {
-      transform: translateX(-10px);
-    }
-    100% {
-      transform: translateX(0);
-    }
-  
+  25% {
+    transform: translateX(-10px);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  75% {
+    transform: translateX(-10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   width: 100%;
+  position: relative;
 }
 
 label {
@@ -81,17 +98,20 @@ label {
   top: 12px;
   left: 12px;
   background-color: white;
-    padding: 0 5px;
+  padding: 0 5px;
   width: fit-content;
+  font-size: 14px;
+  z-index: 1;
 }
 
 input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
+  padding: 12px;
+  border: 2px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
   font-size: 16px;
+  transition: border-color 0.3s ease;
 }
 
 input:focus {
@@ -101,64 +121,84 @@ input:focus {
 
 .login-button {
   width: 100%;
-  padding: 10px 15px;
-  border: 1px solid transparent;
+  padding: 12px 15px;
+  border: 2px solid transparent;
   border-radius: 4px;
   background-color: var(--lightblue);
   color: white;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  margin-top: 10px;
 }
 
 .login-button:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
 }
 
 .login-button:active {
   background-color: var(--lightblue);
+  transform: translateY(0);
 }
 
+.login-button:focus {
+  outline: none;
+  border: 2px solid var(--darkgray);
+}
 
-a{
-    color: var(--lightblue);
-    text-decoration: none;
-    transition: .3s;
-    display: block;
-    text-align: center;
-    margin-top: 16px;
+a {
+  color: var(--lightblue);
+  text-decoration: none;
+  transition: 0.3s;
+  display: block;
+  text-align: center;
+  margin-top: 16px;
   font-size: 16px;
 }
 
-a:hover{
-    text-decoration: underline;
-    cursor: pointer;
-}
-a:active{
-    color: var(--lightblue);
+a:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
-a:focus{
-    outline: none;
-    text-decoration: underline;
+a:active {
+  color: var(--lightblue);
 }
+
+a:focus {
+  outline: none;
+  text-decoration: underline;
+}
+
 .register-button {
   width: 100%;
-  padding: 10px 15px;
+  padding: 12px 15px;
   border-radius: 4px;
   background-color: var(--lightblue);
   color: white;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  border:2px solid transparent;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  margin-top: 10px;
 }
 
 .register-button:hover {
-  background-color: var(--lightblue);
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
 }
 
-button:focus{
-    outline: none;
+.register-button:active {
+  background-color: var(--lightblue);
+  transform: translateY(0);
+}
+
+button:focus {
+  outline: none;
   border: 2px solid var(--darkgray);
 }
