@@ -84,6 +84,12 @@ namespace EventManagement.Infrastructure.Repositories
         {
             var user = await _context.Participants
                 .FirstOrDefaultAsync(p => p.Email == email);
+            
+            if (user == null)
+            {
+                return null;
+            }
+            
             return new LoginModel
             {
                 Email = user.Email,
@@ -94,6 +100,10 @@ namespace EventManagement.Infrastructure.Repositories
         public async Task<int> GetParticipantIdByEmailAsync(string email)
         {
             var user = await _context.Participants.FirstOrDefaultAsync(p => p.Email == email);
+            if (user == null)
+            {
+                return 0;
+            }
             return user.Id;
         } 
 

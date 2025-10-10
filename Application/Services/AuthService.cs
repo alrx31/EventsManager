@@ -39,6 +39,11 @@ public class AuthService:IAuthService
         var identityUserTokenModel =
             await _participantRepository.getExtendedIdentityUserByEmailAsync(identifyUser.Email);
         
+        if (identityUserTokenModel == null)
+        {
+            throw new ValidationException("User token record not found. Please contact support.");
+        }
+        
         identityUserTokenModel.RefreshToken = response.RefreshToken;
         identityUserTokenModel.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(12);
         await _participantRepository.UpdateRefreshTokenAsync(identityUserTokenModel);
@@ -60,6 +65,11 @@ public class AuthService:IAuthService
         response.RefreshToken = _jwtService.GenerateRefreshToken();
         var identityUserTokenModel =
             await _participantRepository.getExtendedIdentityUserByEmailAsync(identityUser.Email);
+        
+        if (identityUserTokenModel == null)
+        {
+            throw new ValidationException("User token record not found. Please contact support.");
+        }
         
         identityUserTokenModel.RefreshToken = response.RefreshToken;
         identityUserTokenModel.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(12);
