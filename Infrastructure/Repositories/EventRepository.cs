@@ -20,36 +20,36 @@ namespace EventManagement.Infrastructure.Repositories
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public EventRepository(ApplicationDbContext dbContext,IMapper mapper)
+        public EventRepository(ApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        
 
-        public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page,int pageSize)
+
+        public async Task<IEnumerable<EventRequest>> GetAllEventsAsync(int page, int pageSize)
         {
-            var datas =  await _dbContext.Events.ToListAsync();
-            return datas.Skip((page-1)*pageSize).Take(pageSize).Select(e => _mapper.Map<EventRequest>(e));
+            var datas = await _dbContext.Events.ToListAsync();
+            return datas.Skip((page - 1) * pageSize).Take(pageSize).Select(e => _mapper.Map<EventRequest>(e));
         }
 
         public async Task<Event> GetEventByIdAsync(int id)
         {
             return await _dbContext.Events.FindAsync(id);
         }
-        
+
         public async Task<EventRequest> GetEventByIdAsyncRequest(int id)
         {
-            
+
             var e = await _dbContext.Events.FindAsync(id);
-            return _mapper.Map<EventRequest>(e);;
-            
+            return _mapper.Map<EventRequest>(e); ;
+
         }
 
         public async Task<Event> GetEventByNameAsync(string name)
         {
             return await _dbContext.Events.FirstOrDefaultAsync(e => e.Name == name);
-            
+
         }
 
         public async Task AddEventAsync(EventDTO newEvent)
@@ -77,12 +77,12 @@ namespace EventManagement.Infrastructure.Repositories
 
         }
 
-        public async Task UpdateEventAsync(int eventId,EventDTO updatedEvent)
+        public async Task UpdateEventAsync(int eventId, EventDTO updatedEvent)
         {
-            
-            
+
+
             var eventToUpdate = await GetEventByIdAsync(eventId);
-            
+
             // update all field
             eventToUpdate.Name = updatedEvent.Name;
             eventToUpdate.Description = updatedEvent.Description;
@@ -90,7 +90,7 @@ namespace EventManagement.Infrastructure.Repositories
             eventToUpdate.Category = updatedEvent.Category;
             eventToUpdate.Date = (DateTime)updatedEvent.Date;
             eventToUpdate.MaxParticipants = (int)updatedEvent.MaxParticipants;
-            
+
 
             if (updatedEvent.ImageData.Length > 0)
             {
@@ -106,7 +106,7 @@ namespace EventManagement.Infrastructure.Repositories
                     Console.WriteLine("Ошибка: Пустой поток данных.");
                 }
             }
-            
+
             _dbContext.Events.Update(eventToUpdate);
         }
 
@@ -115,12 +115,12 @@ namespace EventManagement.Infrastructure.Repositories
             var eventToDelete = await GetEventByIdAsync(id);
             _dbContext.Events.Remove(eventToDelete);
         }
-        
 
-        public async Task<List<EventRequest>> GetEventsByCriteriaAsync(EventCriteria criteria,int page,int pageSize)
+
+        public async Task<List<EventRequest>> GetEventsByCriteriaAsync(EventCriteria criteria, int page, int pageSize)
         {
             IQueryable<Event> query = _dbContext.Events;
-            
+
 
             if (!string.IsNullOrEmpty(criteria.Location))
             {
@@ -132,19 +132,19 @@ namespace EventManagement.Infrastructure.Repositories
                 query = query.Where(e => e.Category == criteria.Category);
             }
 
-            return await query.Skip((page-1)*pageSize).Take(pageSize).Select(e=> _mapper.Map<EventRequest>(e)).ToListAsync();
+            return await query.Skip((page - 1) * pageSize).Take(pageSize).Select(e => _mapper.Map<EventRequest>(e)).ToListAsync();
         }
 
         public async Task<List<EventRequest>> getEventsByUserId(int id)
         {
-            return  await _dbContext.Events.Where(e => e.EventParticipants.Any(ep => ep.ParticipantId == id))
+            return await _dbContext.Events.Where(e => e.EventParticipants.Any(ep => ep.ParticipantId == id))
                 .Select(e => _mapper.Map<EventRequest>(e)).ToListAsync();
         }
 
-        public async Task<List<EventRequest>> SearchEvents(SearchDTO model,int page,int pageSize)
+        public async Task<List<EventRequest>> SearchEvents(SearchDTO model, int page, int pageSize)
         {
-            var events = _dbContext.Events.Where(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
-            return await events.Skip((page-1)*pageSize).Take(pageSize).Select(e=>_mapper.Map<EventRequest>(e)).ToListAsync();
+            var events = _dbContext.Events.Where(e => e.Date == model.Date.ToUniversalTime() || (!String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
+            return await events.Skip((page - 1) * pageSize).Take(pageSize).Select(e => _mapper.Map<EventRequest>(e)).ToListAsync();
         }
 
         public async Task<int> GetCountEvents()
@@ -154,14 +154,12 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task<int> GetCountEventsSearch(SearchDTO model)
         {
-            return await _dbContext.Events.CountAsync(e => e.Date == model.Date.ToUniversalTime() || ( !String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
+            return await _dbContext.Events.CountAsync(e => e.Date == model.Date.ToUniversalTime() || (!String.IsNullOrEmpty(model.Name) && e.Name.Contains(model.Name)));
         }
 
         public async Task<int> GetCountEventsFilter(EventCriteria model)
         {
-            return await _dbContext.Events.CountAsync(e =>(string.IsNullOrEmpty(model.Location) || e.Location == model.Location) && (string.IsNullOrEmpty(model.Category) || e.Category == model.Category));
+            return await _dbContext.Events.CountAsync(e => (string.IsNullOrEmpty(model.Location) || e.Location == model.Location) && (string.IsNullOrEmpty(model.Category) || e.Category == model.Category));
         }
-        
-        
     }
 }

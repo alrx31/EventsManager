@@ -1,0 +1,10 @@
+.git
+.gitignore
+node_modules
+bin
+obj
+dist
+.vscode
+.idea
+*.log
+Tests
