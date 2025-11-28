@@ -25,6 +25,16 @@
         color: #333;
     }
 
+    .server-error {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 10px 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        text-align: center;
+        border: 1px solid #ef9a9a;
+    }
+
     .create-event {
         display: flex;
         flex-direction: column;
@@ -37,17 +47,32 @@
 
         input,textarea {
             resize: none;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 4px;
             outline: none;
             width: 100%;
+            box-sizing: border-box;
+            
             &:focus {
                 border-color: #007bff;
             }
+            
+            &.error {
+                border-color: #f44336;
+                background-color: #fff8f8;
+            }
         }
+        
+        .error-message {
+            color: #f44336;
+            font-size: 12px;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+        
         textarea{
             height: 100px;
         }
@@ -56,6 +81,7 @@
     .create-controll {
         display: flex;
         justify-content: space-evenly;
+        margin-top: 15px;
 
         button {
             padding: 10px 20px;
@@ -63,6 +89,8 @@
             border-radius: 4px;
             cursor: pointer;
             border:1px solid transparent;
+            transition: opacity 0.2s, background-color 0.2s;
+            
             &:first-child {
                 background-color: #f44336;
                 color: #fff;
@@ -73,12 +101,18 @@
                 color: #fff;
             }
 
-            &:hover {
+            &:hover:not(:disabled) {
                 opacity: 0.9;
             }
             &:focus {
                 outline: none;
                 border: 1px solid #333;
+            }
+            
+            &:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+                opacity: 0.7;
             }
         }
     }
