@@ -124,12 +124,12 @@ namespace EventManagement.Infrastructure.Repositories
 
             if (!string.IsNullOrEmpty(criteria.Location))
             {
-                query = query.Where(e => e.Location == criteria.Location);
+                query = query.Where(e => e.Location.ToLower().Contains(criteria.Location.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(criteria.Category))
             {
-                query = query.Where(e => e.Category == criteria.Category);
+                query = query.Where(e => e.Category.ToLower().Contains(criteria.Category.ToLower()));
             }
 
             return await query.Skip((page - 1) * pageSize).Take(pageSize).Select(e => _mapper.Map<EventRequest>(e)).ToListAsync();
@@ -159,7 +159,7 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task<int> GetCountEventsFilter(EventCriteria model)
         {
-            return await _dbContext.Events.CountAsync(e => (string.IsNullOrEmpty(model.Location) || e.Location == model.Location) && (string.IsNullOrEmpty(model.Category) || e.Category == model.Category));
+            return await _dbContext.Events.CountAsync(e => (string.IsNullOrEmpty(model.Location) || e.Location.ToLower().Contains(model.Location.ToLower())) && (string.IsNullOrEmpty(model.Category) || e.Category.ToLower().Contains(model.Category.ToLower())));
         }
     }
 }

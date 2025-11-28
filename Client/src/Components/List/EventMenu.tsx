@@ -134,7 +134,7 @@ const EventMenu:React.FC<IEventMenuProps> = (
                 <h2>Название: {Event?.name}</h2>
                 <h2>Описание: {Event?.description}</h2>
                 <h2>Место проведения: {Event?.location}</h2>
-                <h2>Дата проведения: {Event?.date?.toString()}</h2>
+                <h2>Дата проведения: {Event?.date ? new Date(Event.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</h2>
                 <h2>Категория: {Event?.category}</h2>
                 <h2>Максимальное количество участников: {Event?.maxParticipants}</h2>
                 {(isFull && <h2>мест нет</h2>)}

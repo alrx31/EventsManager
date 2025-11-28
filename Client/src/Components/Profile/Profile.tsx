@@ -120,7 +120,7 @@ export const Profile:React.FC<IProfileProps> = ({
                                     <div className="event-info">
                                         <h3>{event.name}</h3>
                                         <p>{event.description}</p>
-                                        <p>{event.date.toString()}</p>
+                                        <p>{new Date(event.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                                         <p>{event.location}</p>
                                         <p>{event.category}</p>
                                         <p>{event.maxParticipants}</p>

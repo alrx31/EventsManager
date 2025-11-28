@@ -22,6 +22,7 @@ const List: React.FC<ListProps> = (
     const [page, setPage] = React.useState(1);
     
     const [isLoad,setIsLoad] = React.useState(false);
+    const [connectionError, setConnectionError] = React.useState(false);
     // поиск
     const [search, setSearch] = React.useState('');
     const [date, setDate] = React.useState(new Date());
@@ -35,6 +36,7 @@ const List: React.FC<ListProps> = (
     const [isInFilter,setIsFilter] = useState(false);
     const [isInSearch, setInSearch] = useState(false);
     let getEvents = async () =>{
+        setConnectionError(false);
         countEvetns();
         try{
             await EventsService.fetchEvents(page,store.pageSize)
@@ -47,6 +49,7 @@ const List: React.FC<ListProps> = (
                 })
         }catch (e:any){
             console.log(e.response?.data?.message);
+            setConnectionError(true);
         }
     }
 
@@ -85,6 +88,7 @@ const List: React.FC<ListProps> = (
         }).catch(e=>console.log(e))
     }
     let searchF = ()=>{
+        setConnectionError(false);
         EventsService.searchEvents(search, date, pageS, store.pageSize).then((response)=>{
             if(response.status == 200){
                 setEvents(response.data);
@@ -93,10 +97,14 @@ const List: React.FC<ListProps> = (
             }else{
                 throw 'Ошибка поиска';
             }    
-        }).catch(e=>console.log(e));
+        }).catch(e=>{
+            console.log(e);
+            setConnectionError(true);
+        });
     }
     
     let filterF = () =>{
+        setConnectionError(false);
         EventsService.filterEvents(location,category,pageF,store.pageSize).then((response)=>{
             if(response.status === 200){
                 setEvents(response.data);
@@ -105,7 +113,10 @@ const List: React.FC<ListProps> = (
             }else{
                 throw 'Ошибка фильтрации'
             }
-        })
+        }).catch(e=>{
+            console.log(e);
+            setConnectionError(true);
+        });
     }
     
     
@@ -214,7 +225,7 @@ const List: React.FC<ListProps> = (
 
                 <div>
                     <button
-                        className={"create-event"}
+                        className={"primary"}
                         onClick={() => {
                             history(`/user/${store.user.id}`)
                         }}
@@ -241,13 +252,13 @@ const List: React.FC<ListProps> = (
                     }
                     }
                 >
-                    Место проведения
+                    <label>Место проведения</label>
                     <input
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                     />
-                    Категория
+                    <label>Категория</label>
                     <input
                         type={"text"}
                         value={category}
@@ -255,8 +266,8 @@ const List: React.FC<ListProps> = (
                     />
                     <button
                         type={"submit"}
-                        className={"user-logout"}
-                    >фильтровать
+                        className={"primary"}
+                    >Фильтровать
                     </button>
                     <button
                         type={"reset"}
@@ -288,7 +299,11 @@ const List: React.FC<ListProps> = (
 
             <div className="list">
 
-                {events.length > 0 ?
+                {connectionError ? (
+                    <div className="connection-error">
+                        <h2>Ошибка подключения. Попробуйте позже.</h2>
+                    </div>
+                ) : events.length > 0 ?
                     events.map((event, index) => (
                         <div key={index} className="list-item"
                              onClick={() => history(`/event/${event.id}`)}
@@ -308,13 +323,13 @@ const List: React.FC<ListProps> = (
                                     Локация:<p>{event.location}</p>
                                 </div>
                                 <div className="list-item__info__date">
-                                    Дата:<p>{event?.date?.toString()}</p>
+                                    Дата:<p>{event?.date ? new Date(event.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</p>
                                 </div>
                                 <div className="list-item__info__category">
                                     Категория:<p>{event.category}</p>
                                 </div>
                                 <div className="list-item__info__maxParticipants">
-                                    Максимум учасников:<p>{event.maxParticipants}</p>
+                                    Максимум участников:<p>{event.maxParticipants}</p>
                                 </div>
                             </div>
                         </div>

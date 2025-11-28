@@ -22,7 +22,7 @@
         
         
         
-        .user-logout,.create-event {
+        .user-logout,.create-event,.primary {
             background-color: var(--lightblue);
             color: white;
             border-radius: 50px;
@@ -72,6 +72,17 @@
         margin-top: 16px;
         overflow-y: auto;
         padding-bottom: 32px;
+        
+        .connection-error {
+            width: 100%;
+            text-align: center;
+            padding: 40px;
+            color: var(--red);
+            
+            h2 {
+                font-weight: normal;
+            }
+        }
         
         button{
             background-color: var(--lightblue);
@@ -236,6 +247,11 @@ ul {
         flex-direction: column;
         gap: 15px;
 
+        label {
+            font-weight: bold;
+            margin-bottom: -10px;
+        }
+
         input[type="text"] {
             padding: 10px;
             border: 1px solid #ccc;
@@ -249,6 +265,21 @@ ul {
             }
         }
 
+        .primary {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            background-color: #007bff;
+            color: #fff;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+
         .user-logout {
             padding: 10px 15px;
             border: none;
@@ -256,23 +287,11 @@ ul {
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
+            background-color: #6c757d;
+            color: #fff;
 
-            &:first-of-type {
-                background-color: #007bff;
-                color: #fff;
-
-                &:hover {
-                    background-color: #0056b3;
-                }
-            }
-
-            &:last-of-type {
-                background-color: #6c757d;
-                color: #fff;
-
-                &:hover {
-                    background-color: #5a6268;
-                }
+            &:hover {
+                background-color: #5a6268;
             }
         }
     }
