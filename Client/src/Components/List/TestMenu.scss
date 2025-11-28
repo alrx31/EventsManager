@@ -13,41 +13,88 @@
   padding: 10%;
   overflow-y: auto;
   .EventInfo {
-    width: 60%;
+    width: 80%;
     min-height:70%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 10px;
-    border-radius: 5px;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 20px;
+    border-radius: 10px;
     background-color: white;
     box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
     overflow-y: auto;
+    gap: 30px;
+    
     .EventInfo__image{
-      width: 500px;
-      height: 500px;
+      width: 650px;
+      min-width: 650px;
+      height: 650px;
       background-color: var(--lightblue);
       border-radius: 16px;
-      margin: 16px auto;
+      flex-shrink: 0;
       img {
         width: 100%;
         height: 100%;
-        object-fit: fill;
+        object-fit: cover;
         border-radius: 16px;
+      }
+    }
+    
+    .EventInfo__details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      
+      .info-row {
+        margin: 10px 0;
+        display: flex;
+        flex-direction: column;
+        
+        .label {
+          font-size: 14px;
+          color: #888;
+          font-weight: 500;
+          margin-bottom: 4px;
+        }
+        
+        .value {
+          font-size: 18px;
+          color: #333;
+          font-weight: 600;
+        }
+        
+        &:first-child .value {
+          font-size: 28px;
+          font-weight: bold;
+          color: #000;
+        }
+      }
+      
+      .no-seats {
+        color: var(--red);
+        font-weight: bold;
+        font-size: 18px;
+        margin: 10px 0;
       }
     }
     
     .event-controll{
         display: flex;
         flex-direction: row;
-        justify-content: space-evenly;
+        justify-content: flex-start;
         align-items: center;
         width: 100%;
-        margin-top: 16px;
+        margin-top: auto;
+        padding-top: 20px;
+        gap: 10px;
+        
         .event-register,.edit-event{
-            width: 100px;
+            min-width: 120px;
             height: 40px;
+            padding: 0 15px;
             background-color: var(--lightblue);
             color: white;
             border: none;
@@ -61,11 +108,14 @@
             }
           &:disabled{
             background-color: var(--darkgray);
+            border-color: var(--darkgray);
+            cursor: not-allowed;
           }
         }
       .event-delete,.event-back{
-        width: 100px;
+        min-width: 120px;
         height: 40px;
+        padding: 0 15px;
         background-color: var(--red);
         color: white;
         border: none;

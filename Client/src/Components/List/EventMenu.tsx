@@ -131,42 +131,61 @@ const EventMenu:React.FC<IEventMenuProps> = (
                     <img src={Event?.imageSrc} alt=""/>
                 </div>
 
-                <h2>Название: {Event?.name}</h2>
-                <h2>Описание: {Event?.description}</h2>
-                <h2>Место проведения: {Event?.location}</h2>
-                <h2>Дата проведения: {Event?.date ? new Date(Event.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</h2>
-                <h2>Категория: {Event?.category}</h2>
-                <h2>Максимальное количество участников: {Event?.maxParticipants}</h2>
-                {(isFull && <h2>мест нет</h2>)}
-                
-
-                <div className="event-controll">
+                <div className="EventInfo__details">
+                    <div className="info-row">
+                        <span className="label">Название:</span>
+                        <span className="value">{Event?.name}</span>
+                    </div>
+                    <div className="info-row">
+                        <span className="label">Описание:</span>
+                        <span className="value">{Event?.description}</span>
+                    </div>
+                    <div className="info-row">
+                        <span className="label">Место проведения:</span>
+                        <span className="value">{Event?.location}</span>
+                    </div>
+                    <div className="info-row">
+                        <span className="label">Дата проведения:</span>
+                        <span className="value">{Event?.date ? new Date(Event.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                    </div>
+                    <div className="info-row">
+                        <span className="label">Категория:</span>
+                        <span className="value">{Event?.category}</span>
+                    </div>
+                    <div className="info-row">
+                        <span className="label">Максимальное количество участников:</span>
+                        <span className="value">{Event?.maxParticipants}</span>
+                    </div>
+                    {(isFull && <div className="no-seats">Мест нет</div>)}
                     
-                    {store.user.isAdmin && (<button
-                        className={"edit-event"}
-                        onClick={() => history(`/update/${Event?.id}`)}
-                    >Редактировать</button>)}
 
-                    {!store.user.isAdmin && (!isParticipant ? (
+                    <div className="event-controll">
+                        
+                        {store.user.isAdmin && (<button
+                            className={"edit-event"}
+                            onClick={() => history(`/update/${Event?.id}`)}
+                        >Редактировать</button>)}
+
+                        {!store.user.isAdmin && (!isParticipant ? (
+
+                            <button
+                                className={"event-register"}
+                                onClick={handleWrite}
+                                disabled={isFull}
+                            >Записаться </button>
+                        ) : (
+                            <button
+                                className={"event-delete"}
+                                onClick={handleDelete}
+                            >Отписаться </button>
+                        ))}
 
                         <button
-                            className={"event-register"}
-                            onClick={handleWrite}
-                            disabled={isFull}
-                        >Записаться </button>
-                    ) : (
-                        <button
-                            className={"event-delete"}
-                            onClick={handleDelete}
-                        >Отписаться </button>
-                    ))}
-
-                    <button
-                        className={"event-back"}
-                        onClick={() => history("/")}
-                    >Назад</button>
+                            className={"event-back"}
+                            onClick={() => history("/")}
+                        >Назад</button>
+                    </div>
                 </div>
-                
             </div>
         </div>
     )
