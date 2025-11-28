@@ -202,3 +202,45 @@ button:focus {
   outline: none;
   border: 2px solid var(--darkgray);
 }
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+button:disabled:hover {
+  background-color: #cccccc;
+  transform: none;
+  box-shadow: none;
+}
+
+.forgot-password-link {
+  text-align: right;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  
+  a {
+    font-size: 14px;
+    margin-top: 0;
+    display: inline;
+  }
+}
+
+.server-error {
+  background-color: #ffe6e6;
+  border: 1px solid var(--red);
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 20px;
+  color: var(--red);
+  font-size: 14px;
+  text-align: center;
+  animation: error-shake 0.3s ease;
+}
+
+input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}

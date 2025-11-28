@@ -32,21 +32,45 @@ export default class Store {
     }
 
 
-    async login(email: string, password: string) {
+    async login(email: string, password: string): Promise<{success: boolean; errorType?: string}> {
         this.setLoading(true)
         try {
             const response = await AuthService.login(email, password);
+            
+            // Проверяем успешность логина - если нет токена или isLoggedIn = false
+            if (!response.data || !response.data.jwtToken || !response.data.isLoggedIn) {
+                return { success: false, errorType: 'invalid_credentials' };
+            }
+            
             localStorage.setItem('token', response.data.jwtToken);
             this.setAuth(true);
-            if (response.data.userId == 0) {
-                throw 'Ошибка получения данных пользователя';
+            
+            if (!response.data.userId || response.data.userId === 0) {
+                return { success: false, errorType: 'user_not_found' };
             }
+            
             const res = await UserService.fetchUserById(response.data.userId);
-            if (res.data) this.setUser(res.data);
-            else console.log('Ошибка получения данных пользователя');
+            if (res.data) {
+                this.setUser(res.data);
+                return { success: true };
+            } else {
+                console.log('Ошибка получения данных пользователя');
+                return { success: false, errorType: 'user_not_found' };
+            }
 
         } catch (e: any) {
-            console.log(e.response?.data?.message);
+            console.log('Login error:', e.response?.status, e.response?.data);
+            
+            // Определяем тип ошибки по статус-коду
+            const status = e.response?.status;
+            if (status === 401 || status === 400) {
+                // 401 Unauthorized или 400 Bad Request - неверные учетные данные
+                return { success: false, errorType: 'invalid_credentials' };
+            } else if (status === 404) {
+                return { success: false, errorType: 'user_not_found' };
+            }
+            
+            return { success: false, errorType: 'server_error' };
         } finally {
             this.setLoading(false);
         }

@@ -3,6 +3,7 @@ import './App.scss';
 import {Route, Routes, useNavigate} from 'react-router-dom'
 import Login from "./Components/Register/Login";
 import Register from "./Components/Register/Register";
+import PasswordReset from "./Components/Register/PasswordReset";
 import {Context} from "./index";
 import {observer} from "mobx-react-lite";
 import {Waiter} from "./Components/Waiter/Waiter";
@@ -52,6 +53,7 @@ function App() {
             
           <Route path={"/login"}  element={<Login/>} />
           <Route path={"/register"} element={<Register />} />
+          <Route path={"/password-reset"} element={<PasswordReset />} />
           
           <Route path={"/event/:EventId"} element={<EventMenu />} />
           <Route path={"/create-event"} element={<CreatePage />} />
