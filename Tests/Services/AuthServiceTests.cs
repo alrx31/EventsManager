@@ -13,6 +13,7 @@ public class AuthServiceTests
     private readonly Mock<IParticipantRepository> _mockParticipantRepository;
     private readonly Mock<IJwtService> _mockJwtService;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
+    private readonly Mock<IEmailService> _mockEmailService;
     private readonly AuthService _authService;
 
     public AuthServiceTests()
@@ -20,8 +21,12 @@ public class AuthServiceTests
         _mockParticipantRepository = new Mock<IParticipantRepository>();
         _mockJwtService = new Mock<IJwtService>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _authService = new AuthService(_mockParticipantRepository.Object, _mockJwtService.Object,
-            _mockUnitOfWork.Object);
+        _mockEmailService = new Mock<IEmailService>();
+        _authService = new AuthService(
+            _mockParticipantRepository.Object, 
+            _mockJwtService.Object,
+            _mockUnitOfWork.Object,
+            _mockEmailService.Object);
     }
 
     // авторизация
