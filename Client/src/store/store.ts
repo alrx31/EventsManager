@@ -80,22 +80,33 @@ export default class Store {
         email: string,
         password: string,
         firstName: string,
-        lastName: string,
-        BirthDate: Date
-    ) {
+        lastName: string
+    ): Promise<{success: boolean; errorType?: string}> {
         try {
             const response = await AuthService.register(
                 email,
                 password,
                 firstName,
-                lastName,
-                BirthDate
+                lastName
             );
-            if (response.status === 200) {
-                alert('Успешная регистрация');
+            if (response.status === 200 || response.status === 201) {
+                return { success: true };
             }
+            return { success: false, errorType: 'server_error' };
         } catch (e: any) {
-            console.log(e.response?.data?.message);
+            console.log('Registration error:', e.response?.status, e.response?.data);
+            
+            const status = e.response?.status;
+            if (status === 409 || status === 400) {
+                // 409 Conflict - email уже существует, 400 - некорректные данные
+                const message = e.response?.data?.message?.toLowerCase() || '';
+                if (message.includes('email') || message.includes('exist') || message.includes('already')) {
+                    return { success: false, errorType: 'email_exists' };
+                }
+                return { success: false, errorType: 'invalid_data' };
+            }
+            
+            return { success: false, errorType: 'server_error' };
         }
     }
 

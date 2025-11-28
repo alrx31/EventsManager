@@ -1,7 +1,6 @@
 import $api from '../http'
 import { AxiosResponse } from 'axios'
 import {IAuthResponse} from "../models/AuthResponse";
-import Store from "../store/store";
 
 export default class AuthService{
     static async login(
@@ -17,14 +16,17 @@ export default class AuthService{
         email:string,
         password:string,
         FirstName:string,
-        LastName:string,
-        BirthDate:Date
+        LastName:string
     ):Promise<AxiosResponse<IAuthResponse>>{
+        // BirthDate требуется сервером, отправляем дефолтное значение
+        const defaultBirthDate = new Date();
+        defaultBirthDate.setFullYear(defaultBirthDate.getFullYear() - 18);
+        
         return $api.post<IAuthResponse>('/Participants/register', {
             FirstName,
             LastName,
-            BirthDate,
-            RegistrationDate:new Date(),
+            BirthDate: defaultBirthDate,
+            RegistrationDate: new Date(),
             email,
             password
         })

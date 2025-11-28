@@ -1,39 +1,33 @@
-﻿import react, {useContext, useState} from 'react';
+﻿import React, {useContext, useState} from 'react';
 import "./Register.scss"
-import Store from "../../store/store";
 import {Context} from "../../index";
 import {NavLink, useNavigate} from "react-router-dom";
 import {observer} from "mobx-react-lite";
-import React from "react";
+import {Waiter} from "../Waiter/Waiter";
 
 const Register = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
-    const [birthDate, setBirthDate] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [errors, setErrors] = useState<{[key: string]: string}>({});
+    const [serverError, setServerError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     
     const {store} = useContext(Context);
-    const history = useNavigate();
+    const navigate = useNavigate();
     
+    // Валидация email
     const validateEmail = (email: string): boolean => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
     };
     
-    const validateAge = (dateString: string): boolean => {
-        if (!dateString) return false;
-        const birthDateObj = new Date(dateString);
-        const today = new Date();
-        const age = today.getFullYear() - birthDateObj.getFullYear();
-        const monthDiff = today.getMonth() - birthDateObj.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
-            return age - 1 >= 14;
-        }
-        return age >= 14;
+    // Валидация имени/фамилии - только буквы, минимум 2 символа
+    const validateName = (name: string): boolean => {
+        const nameRegex = /^[a-zA-Zа-яА-ЯёЁ]{2,}$/;
+        return nameRegex.test(name.trim());
     };
     
     const validateForm = (): boolean => {
@@ -41,14 +35,14 @@ const Register = () => {
         
         // Email validation
         if (!email.trim()) {
-            newErrors.email = "Email обязателен";
+            newErrors.email = "Введите email";
         } else if (!validateEmail(email)) {
             newErrors.email = "Неверный формат email";
         }
         
         // Password validation
         if (!password) {
-            newErrors.password = "Пароль обязателен";
+            newErrors.password = "Введите пароль";
         } else if (password.length < 6) {
             newErrors.password = "Пароль должен содержать минимум 6 символов";
         }
@@ -62,42 +56,79 @@ const Register = () => {
         
         // First name validation
         if (!firstName.trim()) {
-            newErrors.firstName = "Имя обязательно";
+            newErrors.firstName = "Введите имя";
+        } else if (!validateName(firstName)) {
+            newErrors.firstName = "Имя должно содержать только буквы (минимум 2 символа)";
         }
         
         // Last name validation
         if (!lastName.trim()) {
-            newErrors.lastName = "Фамилия обязательна";
-        }
-        
-        // Birth date validation
-        if (!birthDate) {
-            newErrors.birthDate = "Дата рождения обязательна";
-        } else if (!validateAge(birthDate)) {
-            newErrors.birthDate = "Вам должно быть минимум 14 лет";
+            newErrors.lastName = "Введите фамилию";
+        } else if (!validateName(lastName)) {
+            newErrors.lastName = "Фамилия должна содержать только буквы (минимум 2 символа)";
         }
         
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
     
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setServerError("");
         
         if (!validateForm()) {
             return;
         }
         
-        await store.registration(email, password, firstName, lastName, new Date(birthDate));
-        if (!store.isAuht) {
-            history('/login');
+        setIsLoading(true);
+        
+        try {
+            const result = await store.registration(email, password, firstName, lastName);
+            
+            if (result.success) {
+                alert("Аккаунт успешно создан");
+                navigate('/login');
+            } else {
+                // Обработка ошибок от сервера
+                let errorMessage = "";
+                switch (result.errorType) {
+                    case 'email_exists':
+                        errorMessage = "Пользователь с таким email уже существует";
+                        break;
+                    case 'invalid_data':
+                        errorMessage = "Некорректно заполнены данные";
+                        break;
+                    case 'server_error':
+                    default:
+                        errorMessage = "Произошла ошибка. Попробуйте позже.";
+                        break;
+                }
+                setServerError(errorMessage);
+                alert(errorMessage);
+                // Очищаем пароли при ошибке для безопасности
+                setPassword("");
+                setRepeatPassword("");
+            }
+        } catch (error) {
+            const errorMessage = "Произошла ошибка. Попробуйте позже.";
+            setServerError(errorMessage);
+            alert(errorMessage);
+        } finally {
+            setIsLoading(false);
         }
     };
     
     return (
         <div className="register-page">
+            {isLoading && <Waiter />}
             <form onSubmit={handleSubmit} className="register-form">
                 <h2>Регистрация</h2>
+                
+                {serverError && (
+                    <div className="server-error">
+                        {serverError}
+                    </div>
+                )}
                 
                 <div className={`form-group ${errors.email ? 'error-form' : ''}`}>
                     <label htmlFor="email">Email</label>
@@ -108,6 +139,7 @@ const Register = () => {
                         onChange={e => setEmail(e.target.value)}
                         value={email}
                         className={errors.email ? 'error-input' : ''}
+                        disabled={isLoading}
                     />
                     {errors.email && <span className="error-message">{errors.email}</span>}
                 </div>
@@ -121,6 +153,7 @@ const Register = () => {
                         onChange={e => setPassword(e.target.value)}
                         value={password}
                         className={errors.password ? 'error-input' : ''}
+                        disabled={isLoading}
                     />
                     {errors.password && <span className="error-message">{errors.password}</span>}
                 </div>
@@ -134,6 +167,7 @@ const Register = () => {
                         onChange={e => setRepeatPassword(e.target.value)}
                         value={repeatPassword}
                         className={errors.repeatPassword ? 'error-input' : ''}
+                        disabled={isLoading}
                     />
                     {errors.repeatPassword && <span className="error-message">{errors.repeatPassword}</span>}
                 </div>
@@ -147,6 +181,7 @@ const Register = () => {
                         onChange={e => setFirstName(e.target.value)}
                         value={firstName}
                         className={errors.firstName ? 'error-input' : ''}
+                        disabled={isLoading}
                     />
                     {errors.firstName && <span className="error-message">{errors.firstName}</span>}
                 </div>
@@ -160,25 +195,19 @@ const Register = () => {
                         onChange={e => setLastName(e.target.value)}
                         value={lastName}
                         className={errors.lastName ? 'error-input' : ''}
+                        disabled={isLoading}
                     />
                     {errors.lastName && <span className="error-message">{errors.lastName}</span>}
                 </div>
                 
-                <div className={`form-group ${errors.birthDate ? 'error-form' : ''}`}>
-                    <label htmlFor="birthDate">Дата рождения</label>
-                    <input
-                        type="date"
-                        id="birthDate"
-                        name="birthDate"
-                        onChange={e => setBirthDate(e.target.value)}
-                        value={birthDate}
-                        className={errors.birthDate ? 'error-input' : ''}
-                    />
-                    {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
-                </div>
-                
-                <button type="submit" className="register-button">Зарегистрироваться</button>
-                <NavLink to={"/login"}>Уже есть аккаунт?</NavLink>
+                <button 
+                    type="submit" 
+                    className="register-button"
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
+                </button>
+                <NavLink to="/login">Уже есть аккаунт?</NavLink>
             </form>
         </div>
     )
