@@ -150,6 +150,17 @@ namespace EventManagement.Infrastructure.Repositories
             user!.RefreshTokenExpiryTime = DateTime.UtcNow;
         }
 
+        public async Task UpdatePasswordAsync(LoginModel user, string newPassword)
+        {
+            var participant = await _context.Participants
+                .FirstOrDefaultAsync(p => p.Email == user.Email);
+            
+            if (participant != null)
+            {
+                participant.Password = GetHash(newPassword);
+                _context.Participants.Update(participant);
+            }
+        }
 
         private string GetHash(string pass)
         {

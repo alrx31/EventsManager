@@ -8,4 +8,5 @@ public interface IAuthService
     Task<LoginResponse> Login(LoginModel user);
     Task<LoginResponse> RefreshToken(RefreshTokenModel refreshTokenModel);
     Task Logout(LogoutModel model);
+    Task<PasswordResetResponseDTO> ResetPasswordAsync(string email);
 }

@@ -58,6 +58,15 @@ public class ParticipantsController:ControllerBase
         return Ok();
     }
     
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] PasswordResetRequestDTO model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+            
+        var result = await _authService.ResetPasswordAsync(model.Email);
+        return Ok(result);
+    }
 
     //1. Регистрация участия пользователя в событии;+
     [HttpPut("{eventId}/register/{participantId}")]

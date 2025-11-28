@@ -1,6 +1,6 @@
 import $api from '../http'
 import { AxiosResponse } from 'axios'
-import {IAuthResponse} from "../models/AuthResponse";
+import {IAuthResponse, IPasswordResetResponse} from "../models/AuthResponse";
 
 export default class AuthService{
     static async login(
@@ -38,5 +38,11 @@ export default class AuthService{
                 "UserId":userId ? userId : 0
             }
         return $api.post<IAuthResponse>('/Participants/logout', ask)
+    }
+    
+    static async resetPassword(email: string): Promise<AxiosResponse<IPasswordResetResponse>> {
+        return $api.post<IPasswordResetResponse>('/Participants/reset-password', {
+            Email: email
+        })
     }
 }

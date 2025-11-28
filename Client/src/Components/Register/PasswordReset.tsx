@@ -1,12 +1,15 @@
 import React, {useState} from 'react';
 import './Register.scss';
 import {NavLink} from "react-router-dom";
+import {Waiter} from "../Waiter/Waiter";
+import AuthService from "../../services/AuthService";
 
 const PasswordReset: React.FC = () => {
     const [email, setEmail] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [serverMessage, setServerMessage] = useState("");
     
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,12 +32,21 @@ const PasswordReset: React.FC = () => {
         
         setIsLoading(true);
         
-        // TODO: Реализовать API вызов для восстановления пароля
-        // Пока просто показываем сообщение об успехе
-        setTimeout(() => {
-            setIsSubmitted(true);
+        try {
+            const response = await AuthService.resetPassword(email);
+            
+            if (response.data.success) {
+                setServerMessage(response.data.message);
+                setIsSubmitted(true);
+            } else {
+                setError(response.data.message || "Произошла ошибка. Попробуйте позже.");
+            }
+        } catch (err: any) {
+            console.log('Password reset error:', err.response?.status, err.response?.data);
+            setError("Произошла ошибка. Попробуйте позже.");
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     };
     
     if (isSubmitted) {
@@ -42,11 +54,15 @@ const PasswordReset: React.FC = () => {
             <div className="register-page">
                 <div className="login-form">
                     <h2>Проверьте почту</h2>
-                    <p style={{textAlign: 'center', marginBottom: '20px', color: 'var(--darkgray)'}}>
-                        Если аккаунт с почтой <strong>{email}</strong> существует, 
-                        мы отправили инструкции по восстановлению пароля.
+                    <div className="success-message">
+                        <p>{serverMessage || "Если аккаунт с такой почтой существует, новый пароль будет отправлен на указанный email."}</p>
+                    </div>
+                    <p style={{textAlign: 'center', marginBottom: '20px', color: 'var(--darkgray)', fontSize: '14px'}}>
+                        Новый пароль был отправлен на <strong>{email}</strong>
                     </p>
-                    <NavLink to="/login" className="back-to-login">Вернуться к входу</NavLink>
+                    <NavLink to="/login" className="back-to-login" style={{display: 'block', textAlign: 'center'}}>
+                        Вернуться к входу
+                    </NavLink>
                 </div>
             </div>
         );
@@ -54,12 +70,19 @@ const PasswordReset: React.FC = () => {
     
     return (
         <div className="register-page">
+            {isLoading && <Waiter />}
             <form onSubmit={handleSubmit} className="login-form">
                 <h2>Восстановление пароля</h2>
                 
                 <p style={{textAlign: 'center', marginBottom: '20px', color: 'var(--darkgray)'}}>
-                    Введите вашу почту и мы отправим инструкции по восстановлению пароля.
+                    Введите вашу почту и мы отправим новый пароль.
                 </p>
+                
+                {error && (
+                    <div className="server-error">
+                        {error}
+                    </div>
+                )}
                 
                 <div className={`form-group ${error ? 'error-form' : ''}`}>
                     <label htmlFor="email">Почта</label>
@@ -72,7 +95,6 @@ const PasswordReset: React.FC = () => {
                         className={error ? 'error-input' : ''}
                         disabled={isLoading}
                     />
-                    {error && <span className="error-message">{error}</span>}
                 </div>
                 
                 <button 
@@ -80,7 +102,7 @@ const PasswordReset: React.FC = () => {
                     className="login-button"
                     disabled={isLoading}
                 >
-                    {isLoading ? 'Отправка...' : 'Отправить'}
+                    {isLoading ? 'Отправка...' : 'Отправить новый пароль'}
                 </button>
                 
                 <NavLink to="/login">Вернуться к входу</NavLink>

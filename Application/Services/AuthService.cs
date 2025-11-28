@@ -13,13 +13,19 @@ public class AuthService:IAuthService
     private readonly IParticipantRepository _participantRepository;
     private readonly IJwtService _jwtService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmailService _emailService;
     
     
-    public AuthService(IParticipantRepository participantRepository, IJwtService jwtService, IUnitOfWork unitOfWork)
+    public AuthService(
+        IParticipantRepository participantRepository, 
+        IJwtService jwtService, 
+        IUnitOfWork unitOfWork,
+        IEmailService emailService)
     {
         _participantRepository = participantRepository;
         _jwtService = jwtService;
         _unitOfWork = unitOfWork;
+        _emailService = emailService;
     }
     
     
@@ -84,6 +90,64 @@ public class AuthService:IAuthService
             throw new ValidationException("Invalid token or user id");
         await _participantRepository.CanselRefreshToken(model.UserId);
         await _unitOfWork.CompleteAsync();
+    }
+    
+    public async Task<PasswordResetResponseDTO> ResetPasswordAsync(string email)
+    {
+        var response = new PasswordResetResponseDTO();
+        
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            response.Success = false;
+            response.Message = "Email обязателен";
+            return response;
+        }
+        
+        var user = await _participantRepository.GetParticipantByEmailAsync(email);
+        
+        if (user == null)
+        {
+            // Не раскрываем, существует ли пользователь (безопасность)
+            response.Success = true;
+            response.Message = "Если аккаунт с таким email существует, новый пароль будет отправлен на почту";
+            return response;
+        }
+        
+        // Генерируем новый пароль
+        var newPassword = GenerateRandomPassword(10);
+        
+        // Обновляем пароль пользователя
+        await _participantRepository.UpdatePasswordAsync(user, newPassword);
+        await _unitOfWork.CompleteAsync();
+        
+        // Отправляем email с новым паролем
+        try
+        {
+            await _emailService.SendPasswordResetEmailAsync(email, newPassword);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to send email: {ex.Message}");
+            // Продолжаем, даже если email не отправлен
+        }
+        
+        response.Success = true;
+        response.Message = "Если аккаунт с таким email существует, новый пароль будет отправлен на почту";
+        return response;
+    }
+    
+    private static string GenerateRandomPassword(int length)
+    {
+        const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%";
+        var random = new Random();
+        var password = new char[length];
+        
+        for (int i = 0; i < length; i++)
+        {
+            password[i] = chars[random.Next(chars.Length)];
+        }
+        
+        return new string(password);
     }
     
 }

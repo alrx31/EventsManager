@@ -26,4 +26,6 @@ public interface IParticipantRepository
     Task AddRefreshTokenField(ParticipantRegisterDTO user);
 
     Task CanselRefreshToken(int userId);
+    
+    Task UpdatePasswordAsync(LoginModel user, string newPassword);
 }

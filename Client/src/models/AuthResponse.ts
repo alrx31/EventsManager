@@ -6,3 +6,8 @@ export interface IAuthResponse {
     jwtToken:string;
     refreshToken:string;
 }
+
+export interface IPasswordResetResponse {
+    success: boolean;
+    message: string;
+}

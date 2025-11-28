@@ -240,6 +240,21 @@ button:disabled:hover {
   animation: error-shake 0.3s ease;
 }
 
+.success-message {
+  background-color: #e6ffe6;
+  border: 1px solid #28a745;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 20px;
+  color: #28a745;
+  font-size: 14px;
+  text-align: center;
+  
+  p {
+    margin: 0;
+  }
+}
+
 input:disabled {
   background-color: #f5f5f5;
   cursor: not-allowed;
