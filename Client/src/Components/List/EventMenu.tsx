@@ -7,6 +7,7 @@ import {Waiter} from "../Waiter/Waiter";
 import {Context} from "../../index";
 import ParticipantService from "../../services/ParticipantService";
 import {IUser} from "../../models/User";
+import {formatLocalDateTime} from "../../utils/date";
 interface IEventMenuProps {
 }
 const EventMenu:React.FC<IEventMenuProps> = (
@@ -162,7 +163,7 @@ const EventMenu:React.FC<IEventMenuProps> = (
                     </div>
                     <div className="info-row">
                         <span className="label">Дата проведения:</span>
-                        <span className="value">{Event?.date ? new Date(Event.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                        <span className="value">{Event?.date ? formatLocalDateTime(Event.date) : ''}</span>
                     </div>
                     <div className="info-row">
                         <span className="label">Категория:</span>

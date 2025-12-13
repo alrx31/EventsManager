@@ -7,6 +7,7 @@ import {IUser} from "../../models/User";
 import "./Profile.scss";
 import {IEvent} from "../../models/Event";
 import EventsService from "../../services/EventsService";
+import {formatLocalDateTime} from "../../utils/date";
 interface IProfileProps {
 }
 export const Profile:React.FC<IProfileProps> = ({
@@ -83,7 +84,7 @@ export const Profile:React.FC<IProfileProps> = ({
 
                 <div className="profile-info-row">
                     <span>Дата регистрации:</span>
-                    <span>{user?.registrationDate?.toString()}</span>
+                    <span>{user?.registrationDate ? formatLocalDateTime(user.registrationDate) : ''}</span>
                 </div>
 
                 <div className="profile-info-row">
@@ -115,7 +116,7 @@ export const Profile:React.FC<IProfileProps> = ({
                                     <div className="event-info">
                                         <h3>{event.name}</h3>
                                         <p>{event.description}</p>
-                                        <p>{new Date(event.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                        <p>{formatLocalDateTime(event.date)}</p>
                                         <p>{event.location}</p>
                                         <p>{event.category}</p>
                                         <p>{event.maxParticipants}</p>

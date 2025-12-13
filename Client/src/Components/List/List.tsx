@@ -6,6 +6,7 @@ import {IEvent} from "../../models/Event";
 import {observer} from "mobx-react-lite";
 import EventsService from "../../services/EventsService";
 import {Waiter} from "../Waiter/Waiter";
+import {formatLocalDateTime} from "../../utils/date";
 interface ListProps {
 }
 
@@ -342,7 +343,7 @@ const List: React.FC<ListProps> = (
                                     Локация:<p>{event.location}</p>
                                 </div>
                                 <div className="list-item__info__date">
-                                    Дата:<p>{event?.date ? new Date(event.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</p>
+                                    Дата:<p>{event?.date ? formatLocalDateTime(event.date) : ''}</p>
                                 </div>
                                 <div className="list-item__info__category">
                                     Категория:<p>{event.category}</p>
