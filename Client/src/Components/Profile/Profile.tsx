@@ -101,25 +101,32 @@ export const Profile:React.FC<IProfileProps> = ({
             {!store.user.isAdmin ? (
                 <div className="events">
                     <h2>Мероприятия пользователя</h2>
-                    <h2>Всего: {events.length}</h2>
+                    <h3>Всего: {events.length}</h3>
                     <div className="events-list">
+                        <div className="events-header">
+                            <div>Фото</div>
+                            <div>Название</div>
+                            <div>Описание</div>
+                            <div>Дата</div>
+                            <div>Место / Категория</div>
+                        </div>
                         {events.map((event:IEvent)=>{
                             return (
-                                <div className="event" key={event.id}
+                                <div className="event-row" key={event.id}
                                      onClick={()=>{
                                          history(`/event/${event.id}`)
                                      }}
                                 >
-                                    <div className="event-image">
+                                    <div className="event-thumb">
                                         <img src={event.imageSrc} alt=""/>
                                     </div>
-                                    <div className="event-info">
-                                        <h3>{event.name}</h3>
-                                        <p>{event.description}</p>
-                                        <p>{formatLocalDateTime(event.date)}</p>
-                                        <p>{event.location}</p>
-                                        <p>{event.category}</p>
-                                        <p>{event.maxParticipants}</p>
+                                    <div className="event-title">{event.name}</div>
+                                    <div className="event-desc">{event.description}</div>
+                                    <div className="event-date">{formatLocalDateTime(event.date)}</div>
+                                    <div className="event-meta">
+                                        <span>{event.location}</span>
+                                        <span>{event.category}</span>
+                                        <span>До {event.maxParticipants} мест</span>
                                     </div>
                                 </div>
                             )
