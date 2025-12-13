@@ -313,50 +313,42 @@ const List: React.FC<ListProps> = (
                 )}
             </ul>
 
-            <div className="list">
-
+            <div className="list-table">
                 {connectionError ? (
                     <div className="connection-error">
                         <h2>Ошибка подключения. Попробуйте позже.</h2>
                     </div>
-                ) : events.length > 0 ?
-                    events.map((event, index) => (
-                        <div key={index} className="list-item"
-                             onClick={() => history(`/event/${event.id}`)}
-                        >
-                            <p>{event.id}</p>
-                            <div className="list-item__image">
-                                <img src={event.imageSrc} alt=""/>
-                            </div>
-                            <div className="list-item__info">
-                                <div className="list-item__info__name">
-                                    Название:<p>{event.name}</p>
-                                </div>
-                                <div className="list-item__info__description">
-                                    Описание:<p>{event.description}</p>
-                                </div>
-                                <div className="list-item__info__location">
-                                    Локация:<p>{event.location}</p>
-                                </div>
-                                <div className="list-item__info__date">
-                                    Дата:<p>{event?.date ? formatLocalDateTime(event.date) : ''}</p>
-                                </div>
-                                <div className="list-item__info__category">
-                                    Категория:<p>{event.category}</p>
-                                </div>
-                                <div className="list-item__info__maxParticipants">
-                                    Максимум участников:<p>{event.maxParticipants}</p>
-                                </div>
-                            </div>
+                ) : events.length > 0 ? (
+                    <>
+                        <div className="table-header">
+                            <div>Фото</div>
+                            <div>Название</div>
+                            <div>Описание</div>
+                            <div>Дата</div>
+                            <div>Место / Категория</div>
+                            <div>Макс. мест</div>
                         </div>
-                    )) : (
-                        <h1>Мероприятий нет</h1>
-                    )
-
-                }
-
-                {//events.length > 0 && <button onClick={getEvents}>Загрузить еще</button>}
-                }
+                        {events.map((event, index) => (
+                            <div key={index} className="table-row"
+                                 onClick={() => history(`/event/${event.id}`)}
+                            >
+                                <div className="thumb">
+                                    <img src={event.imageSrc} alt=""/>
+                                </div>
+                                <div className="title">{event.name}</div>
+                                <div className="desc">{event.description}</div>
+                                <div className="date">{event?.date ? formatLocalDateTime(event.date) : ''}</div>
+                                <div className="meta">
+                                    <span>{event.location}</span>
+                                    <span>{event.category}</span>
+                                </div>
+                                <div className="max">{event.maxParticipants}</div>
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <h1>Мероприятий нет</h1>
+                )}
             </div>
 
         </div>
