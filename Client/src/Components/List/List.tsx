@@ -146,10 +146,6 @@ const List: React.FC<ListProps> = (
     }
     let HandleSubmitFilter = (e:any)=>{
         e.preventDefault();
-        if(!location.trim() && !category.trim()){
-            alert("Укажите локацию или категорию для фильтрации");
-            return;
-        }
         setIsFilter(true);
         setInSearch(false);
         setPageF(1);

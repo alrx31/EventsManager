@@ -36,11 +36,12 @@ public class ParticipantService:IParticipantService
     }
 
 
-    public Task RegisterParticipantToEventAsync(int eventId, int participantId)
+    public async Task RegisterParticipantToEventAsync(int eventId, int participantId)
     {
         if (eventId < 1) throw new ValidationException("Invalid Event Id");
         if (participantId < 1) throw new ValidationException("Invalid Participant");
-        return _participantRepository.RegisterParticipantToEventAsync(eventId, participantId);
+        await _participantRepository.RegisterParticipantToEventAsync(eventId, participantId);
+        await _unitOfWork.CompleteAsync();
     }
 
     public Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(int eventId)
@@ -57,11 +58,12 @@ public class ParticipantService:IParticipantService
         return participant;
     }
 
-    public Task CancelRegistrationAsync(int eventId, int participantId)
+    public async Task CancelRegistrationAsync(int eventId, int participantId)
     {
         if(eventId < 1) throw new ValidationException("Invalid Event Id");
         if(participantId < 1) throw new ValidationException("Invalid Participant Id");
-        return _participantRepository.CancelRegistrationAsync(eventId, participantId);
+        await _participantRepository.CancelRegistrationAsync(eventId, participantId);
+        await _unitOfWork.CompleteAsync();
     }
 
     public Task SendEmailToParticipantAsync(int eventId, int participantId, string message)

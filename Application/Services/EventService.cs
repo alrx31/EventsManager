@@ -116,13 +116,7 @@ public class EventService : IEventService
         {
             throw new ValidationException("Invalid page or pageSize");
         }
-        if(string.IsNullOrEmpty(criteria.Location) && string.IsNullOrEmpty(criteria.Category))
-        {
-            throw new ValidationException("Date, Location or Category is required");
-        }
-        
-        
-        
+        // если параметр пустой, он не учитывается — допускаем фильтр по одному или ни по одному параметру
         return await _eventRepository.GetEventsByCriteriaAsync(criteria, page, pageSize);
     }
 
