@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using EventManagement.Middlewares;
 
 namespace EventManagement.Infrastructure.Repositories
 {
@@ -30,26 +29,26 @@ namespace EventManagement.Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.Id == eventId);
             if (targetEvent == null)
             {
-                throw new NotFoundException("Событие не найдено");
+                throw new Exception("Событие не найдено");
             }
 
             var participant = await _context.Participants.FirstOrDefaultAsync(p => p.Id == participantId);
             if (participant == null)
             {
-                throw new NotFoundException("Участник не найден");
+                throw new Exception("Участник не найден");
             }
 
             var alreadyRegistered = await _context.EventParticipants
                 .AnyAsync(ep => ep.EventId == eventId && ep.ParticipantId == participantId);
             if (alreadyRegistered)
             {
-                throw new AlreadyExistsException("Пользователь уже записан на это событие");
+                throw new Exception("Пользователь уже записан на это событие");
             }
 
             if (targetEvent.MaxParticipants > 0 &&
                 targetEvent.EventParticipants.Count >= targetEvent.MaxParticipants)
             {
-                throw new ValidationException("Достигнут лимит участников");
+                throw new Exception("Достигнут лимит участников");
             }
 
             _context.EventParticipants.Add(new EventParticipant
@@ -96,7 +95,7 @@ namespace EventManagement.Infrastructure.Repositories
         {
             if (string.IsNullOrWhiteSpace(user.Email))
             {
-                throw new ValidationException("Email обязателен");
+                throw new Exception("Email обязателен");
             }
 
             var normalizedEmail = user.Email.Trim().ToLower();
@@ -104,7 +103,7 @@ namespace EventManagement.Infrastructure.Repositories
                 .AnyAsync(p => p.Email.ToLower() == normalizedEmail);
             if (emailExists)
             {
-                throw new AlreadyExistsException("Пользователь с таким email уже существует");
+                throw new Exception("Пользователь с таким email уже существует");
             }
 
             var participant = _mapper.Map<Participant>(user);
