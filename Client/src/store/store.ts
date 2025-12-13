@@ -95,17 +95,27 @@ export default class Store {
             return { success: false, errorType: 'server_error' };
         } catch (e: any) {
             console.log('Registration error:', e.response?.status, e.response?.data);
-            
+
             const status = e.response?.status;
-            if (status === 409 || status === 400) {
-                // 409 Conflict - email уже существует, 400 - некорректные данные
-                const message = e.response?.data?.message?.toLowerCase() || '';
-                if (message.includes('email') || message.includes('exist') || message.includes('already')) {
+            const rawMessage = e.response?.data?.message || e.response?.data?.Message || '';
+            const message = rawMessage.toLowerCase();
+            const isEmailExistsMessage = message.includes('email') ||
+                message.includes('exist') ||
+                message.includes('already') ||
+                message.includes('существует');
+
+            if (status === 409 || status === 400 || isEmailExistsMessage) {
+                if (isEmailExistsMessage) {
                     return { success: false, errorType: 'email_exists' };
                 }
                 return { success: false, errorType: 'invalid_data' };
             }
-            
+
+            // even if 500, try to surface specific message about email
+            if (status === 500 && isEmailExistsMessage) {
+                return { success: false, errorType: 'email_exists' };
+            }
+
             return { success: false, errorType: 'server_error' };
         }
     }

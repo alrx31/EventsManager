@@ -25,41 +25,14 @@ const EventMenu:React.FC<IEventMenuProps> = (
     let {store} = useContext(Context)
     let [isFull, setIsFull] = React.useState(false);
     
-    useEffect(()=>{
-        const loadEvent = async () =>{
-            setIsLoad(true);
-            try{
-                const response = await EventsService.fetchEvent(Number(EventId));
-                if (response.status === 200) {
-                    setEvent(response.data);
-                    await checkParticipant();
-                } else {
-                    throw 'Ошибка получения данных';
-                }
-            }catch(e:any){
-                console.log(e.response?.data?.message);
-            }finally {
-                setIsLoad(false);
-            }
-        }
-        loadEvent();
-    },[EventId])
-    
-    useEffect(()=>{
-        if(!EventId) return;
-        fetchParticipants();
-    },[EventId, Event?.maxParticipants])
-    
-    
-    if(isLoad){
-        return <Waiter/> 
-    }
-    let checkParticipant = async ()=>{
+    const eventIdNum = Number(EventId ?? 0);
+
+    const checkParticipant = async ()=>{
         try{
             const response = await EventsService.getEvetnsByUserId(store.user.id);
             if(response.status === 200){
                 let events = response.data;
-                let event = events.find((event:IEvent)=>event.id === Number(EventId));
+                let event = events.find((event:IEvent)=>event.id === eventIdNum);
                 if(event !== undefined){
                     setIsParticipant(true);
                 }else{
@@ -75,7 +48,7 @@ const EventMenu:React.FC<IEventMenuProps> = (
 
     const fetchParticipants = async ()=>{
         try{
-            const response = await EventsService.getParticipants(Number(EventId));
+            const response = await EventsService.getParticipants(eventIdNum);
             if(response.status === 200){
                 const list = response.data as IUser[];
                 setParticipants(list);
@@ -93,6 +66,38 @@ const EventMenu:React.FC<IEventMenuProps> = (
                 alert("Ошибка получения данных, на мероприятие записаться не получится");
             }
         }
+    }
+    
+    useEffect(()=>{
+        const loadEvent = async () =>{
+            setIsLoad(true);
+            try{
+                const response = await EventsService.fetchEvent(eventIdNum);
+                if (response.status === 200) {
+                    setEvent(response.data);
+                    await checkParticipant();
+                } else {
+                    throw 'Ошибка получения данных';
+                }
+            }catch(e:any){
+                console.log(e.response?.data?.message);
+            }finally {
+                setIsLoad(false);
+            }
+        }
+        if(eventIdNum > 0){
+            loadEvent();
+        }
+    },[eventIdNum])
+    
+    useEffect(()=>{
+        if(!eventIdNum) return;
+        fetchParticipants();
+    },[eventIdNum, Event?.maxParticipants])
+    
+    
+    if(isLoad){
+        return <Waiter/> 
     }
     
         
