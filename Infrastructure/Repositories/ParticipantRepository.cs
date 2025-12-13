@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using EventManagement.Middlewares;
 
 namespace EventManagement.Infrastructure.Repositories
 {
@@ -24,8 +25,33 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task RegisterParticipantToEventAsync(int eventId, int participantId)
         {
-            await _context.Events.FindAsync(eventId);
-            await _context.Participants.FindAsync(participantId);
+            var targetEvent = await _context.Events
+                .Include(e => e.EventParticipants)
+                .FirstOrDefaultAsync(e => e.Id == eventId);
+            if (targetEvent == null)
+            {
+                throw new NotFoundException("Событие не найдено");
+            }
+
+            var participant = await _context.Participants.FirstOrDefaultAsync(p => p.Id == participantId);
+            if (participant == null)
+            {
+                throw new NotFoundException("Участник не найден");
+            }
+
+            var alreadyRegistered = await _context.EventParticipants
+                .AnyAsync(ep => ep.EventId == eventId && ep.ParticipantId == participantId);
+            if (alreadyRegistered)
+            {
+                throw new AlreadyExistsException("Пользователь уже записан на это событие");
+            }
+
+            if (targetEvent.MaxParticipants > 0 &&
+                targetEvent.EventParticipants.Count >= targetEvent.MaxParticipants)
+            {
+                throw new ValidationException("Достигнут лимит участников");
+            }
+
             _context.EventParticipants.Add(new EventParticipant
             {
                 EventId = eventId,
@@ -68,11 +94,24 @@ namespace EventManagement.Infrastructure.Repositories
         
         public async Task RegisterParticipantAsync(ParticipantRegisterDTO user)
         {
+            if (string.IsNullOrWhiteSpace(user.Email))
+            {
+                throw new ValidationException("Email обязателен");
+            }
+
+            var normalizedEmail = user.Email.Trim().ToLower();
+            var emailExists = await _context.Participants
+                .AnyAsync(p => p.Email.ToLower() == normalizedEmail);
+            if (emailExists)
+            {
+                throw new AlreadyExistsException("Пользователь с таким email уже существует");
+            }
+
             var participant = _mapper.Map<Participant>(user);
+            participant.Email = normalizedEmail;
                 
             // назначение админа по имени
             participant.IsAdmin = participant.FirstName == "admin";
-            
             
             participant.EventParticipants = new List<EventParticipant>();
             participant.Password = GetHash(user.Password);
@@ -128,13 +167,21 @@ namespace EventManagement.Infrastructure.Repositories
 
         public async Task AddRefreshTokenField(ParticipantRegisterDTO user)
         {
+            var normalizedEmail = user.Email.Trim().ToLower();
+            var exists = await _context.ExtendedIdentityUsers
+                .AnyAsync(u => u.Email.ToLower() == normalizedEmail);
+            if (exists)
+            {
+                return;
+            }
+
             var newToken = new ExtendedIdentityUser
             {
-                Email = user.Email,
+                Email = normalizedEmail,
                 RefreshToken = "",
                 RefreshTokenExpiryTime = DateTime.UtcNow,
                 ParticipantId = await _context.Participants
-                    .Where(p => p.Email == user.Email)
+                    .Where(p => p.Email.ToLower() == normalizedEmail)
                     .Select(p => p.Id)
                     .FirstOrDefaultAsync(),
                 Participant = null

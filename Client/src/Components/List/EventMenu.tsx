@@ -1,11 +1,12 @@
 ﻿import React, {useContext, useEffect} from 'react';
 import './TestMenu.scss';
-import {Await, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import { IEvent } from '../../models/Event';
 import EventsService from '../../services/EventsService';
 import {Waiter} from "../Waiter/Waiter";
 import {Context} from "../../index";
 import ParticipantService from "../../services/ParticipantService";
+import {IUser} from "../../models/User";
 interface IEventMenuProps {
 }
 const EventMenu:React.FC<IEventMenuProps> = (
@@ -18,64 +19,79 @@ const EventMenu:React.FC<IEventMenuProps> = (
     let [Event,setEvent] = React.useState<IEvent>({} as IEvent);
     let [isLoad,setIsLoad] = React.useState(false);
     let [isParticipant,setIsParticipant] = React.useState(false);
+    let [participants,setParticipants] = React.useState<IUser[]>([]);
     let history = useNavigate();
     let {store} = useContext(Context)
-    let [isFull, setIsFull] = React.useState(true);
+    let [isFull, setIsFull] = React.useState(false);
     
     useEffect(()=>{
-        setIsLoad(true);
-        
-        EventsService.fetchEvent(Number(EventId))
-            .then((response) => {
+        const loadEvent = async () =>{
+            setIsLoad(true);
+            try{
+                const response = await EventsService.fetchEvent(Number(EventId));
                 if (response.status === 200) {
                     setEvent(response.data);
-                    
-                    
-                    checkParticipant();
+                    await checkParticipant();
                 } else {
                     throw 'Ошибка получения данных';
                 }
-            }).catch((e: any) => {
+            }catch(e:any){
                 console.log(e.response?.data?.message);
-            })
-
-        setIsLoad(false)
+            }finally {
+                setIsLoad(false);
+            }
+        }
+        loadEvent();
     },[EventId])
     
     useEffect(()=>{
-        EventsService.getParticipants(Number(EventId))
-            .then((response)=>{
-                if(response.status === 200){
-                    let participants = response.data;
-                    if(Event?.maxParticipants && participants.length < Event?.maxParticipants){
-                        setIsFull(false);
-                    }
-                }
-            }).catch((e:any)=>{
-            console.log(e.response?.data?.message);
-            alert("Ошибка получения данных, на мероприятие записаться не получится");
-        })
-    },[Event])
+        if(!EventId) return;
+        fetchParticipants();
+    },[EventId, Event?.maxParticipants])
     
     
     if(isLoad){
         return <Waiter/> 
     }
-    let checkParticipant = ()=>{
-        EventsService.getEvetnsByUserId(store.user.id)
-            .then((response)=>{
-                if(response.status === 200){
-                    let events = response.data;
-                    let event = events.find((event:IEvent)=>event.id === Number(EventId));
-                    if(event !== undefined){
-                        setIsParticipant(true);
-                    }
+    let checkParticipant = async ()=>{
+        try{
+            const response = await EventsService.getEvetnsByUserId(store.user.id);
+            if(response.status === 200){
+                let events = response.data;
+                let event = events.find((event:IEvent)=>event.id === Number(EventId));
+                if(event !== undefined){
+                    setIsParticipant(true);
                 }else{
-                    throw 'Ошибка получения данных';
+                    setIsParticipant(false);
                 }
-            }).catch((e:any)=>{
-                console.log(e.response?.data?.message);
-            })
+            }else{
+                throw 'Ошибка получения данных';
+            }
+        }catch(e:any){
+            console.log(e.response?.data?.message);
+        }
+    }
+
+    const fetchParticipants = async ()=>{
+        try{
+            const response = await EventsService.getParticipants(Number(EventId));
+            if(response.status === 200){
+                const list = response.data as IUser[];
+                setParticipants(list);
+                if(Event?.maxParticipants){
+                    setIsFull(list.length >= Event.maxParticipants);
+                }else{
+                    setIsFull(false);
+                }
+            }else{
+                throw 'Ошибка получения данных';
+            }
+        }catch(e:any){
+            console.log(e.response?.data?.message);
+            if(!store.user.isAdmin){
+                alert("Ошибка получения данных, на мероприятие записаться не получится");
+            }
+        }
     }
     
         
@@ -91,7 +107,7 @@ const EventMenu:React.FC<IEventMenuProps> = (
                         throw "Ошибка записи на мероприятие"
                     }
                 }).catch((e: any) => {
-                    alert("Ошибка записи на мероприятие")
+                    alert(e?.response?.data?.message || "Ошибка записи на мероприятие")
                     console.log(e.response?.data?.message)
             }).finally(()=>{
                 setIsLoad(false)
@@ -157,6 +173,23 @@ const EventMenu:React.FC<IEventMenuProps> = (
                         <span className="value">{Event?.maxParticipants}</span>
                     </div>
                     {(isFull && <div className="no-seats">Мест нет</div>)}
+                    
+                    {store.user.isAdmin && (
+                        <div className="participants-block">
+                            <h3>Участники ({participants.length}{Event?.maxParticipants ? ` / ${Event.maxParticipants}` : ""})</h3>
+                            {participants.length > 0 ? (
+                                <ul>
+                                    {participants.map((p)=>(
+                                        <li key={p.id}>
+                                            {p.firstName} {p.lastName} — {p.email}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ):(
+                                <p>Пока никто не записался</p>
+                            )}
+                        </div>
+                    )}
                     
 
                     <div className="event-controll">

@@ -37,19 +37,20 @@ const List: React.FC<ListProps> = (
     const [isInSearch, setInSearch] = useState(false);
     let getEvents = async () =>{
         setConnectionError(false);
-        countEvetns();
+        setIsLoad(true);
         try{
-            await EventsService.fetchEvents(page,store.pageSize)
-                .then((response)=>{
-                    if(response.status == 200){
-                        setEvents(response.data);
-                    }else{
-                        throw 'Ошибка получения данных';
-                    }
-                })
+            await countEvetns();
+            const response = await EventsService.fetchEvents(page,store.pageSize);
+            if(response.status == 200){
+                setEvents(response.data);
+            }else{
+                throw 'Ошибка получения данных';
+            }
         }catch (e:any){
             console.log(e.response?.data?.message);
             setConnectionError(true);
+        } finally {
+            setIsLoad(false);
         }
     }
 
@@ -57,24 +58,20 @@ const List: React.FC<ListProps> = (
     
 
     useEffect(() => {
-        setIsLoad(true)
-        
         getEvents();
-        setIsLoad(false)
     }, [page]);
     useEffect(() => {
         if(!isInSearch) return;
         searchF();
-        setIsLoad(false)
     }, [pageS]);
     useEffect(() => {
         if(!isInFilter) return;
         filterF();
-        setIsLoad(false)
     }, [pageF]);
     
-    let countEvetns = () =>{
-        EventsService.getCountEvents().then((response)=>{
+    let countEvetns = async () =>{
+        try{
+            const response = await EventsService.getCountEvents();
             if(response.status == 200){
                 if(response.data != 0){
                     setCountPages(Math.ceil(response.data/store.pageSize));
@@ -85,65 +82,82 @@ const List: React.FC<ListProps> = (
             }else{
                 throw 'Ошибка получения количества мероприятий';
             }
-        }).catch(e=>console.log(e))
+        }catch(e){
+            console.log(e);
+        }
     }
-    let searchF = ()=>{
+    let searchF = async ()=>{
         setConnectionError(false);
-        EventsService.searchEvents(search, date, pageS, store.pageSize).then((response)=>{
+        setIsLoad(true);
+        try{
+            const response = await EventsService.searchEvents(search, date, pageS, store.pageSize);
             if(response.status == 200){
                 setEvents(response.data);
-                if (events.length === 0) return;
-                getSearchEventsCount()
+                await getSearchEventsCount();
             }else{
                 throw 'Ошибка поиска';
-            }    
-        }).catch(e=>{
+            }
+        }catch(e:any){
             console.log(e);
             setConnectionError(true);
-        });
+        } finally {
+            setIsLoad(false);
+        }
     }
     
-    let filterF = () =>{
+    let filterF = async () =>{
         setConnectionError(false);
-        EventsService.filterEvents(location,category,pageF,store.pageSize).then((response)=>{
+        setIsLoad(true);
+        try{
+            const response = await EventsService.filterEvents(location,category,pageF,store.pageSize);
             if(response.status === 200){
                 setEvents(response.data);
-                if(events.length === 0) return;
-                getFilterEventsCount();
+                await getFilterEventsCount();
             }else{
                 throw 'Ошибка фильтрации'
             }
-        }).catch(e=>{
+        }catch(e:any){
             console.log(e);
             setConnectionError(true);
-        });
+        } finally {
+            setIsLoad(false);
+        }
     }
     
     
     let handleChangePage = (el:number)=>{
         if(isInSearch){
-            setPageS(el)
-        }else{
-            setPage(el);
+            setPageS(el);
+            return;
         }
+        if(isInFilter){
+            setPageF(el);
+            return;
+        }
+        setPage(el);
     }
     let HandleSubmitSearch = (e:any)=>{
         e.preventDefault();
-        setInSearch(true)
-        setIsLoad(true)
+        setInSearch(true);
+        setIsFilter(false);
+        setPageS(1);
         searchF();
-        setIsLoad(false)
     }
     let HandleSubmitFilter = (e:any)=>{
         e.preventDefault();
+        if(!location.trim() && !category.trim()){
+            alert("Укажите локацию или категорию для фильтрации");
+            return;
+        }
         setIsFilter(true);
-        setIsLoad(true);
+        setInSearch(false);
+        setPageF(1);
         filterF();
-        setIsLoad(false);
     }
     
-    let getSearchEventsCount = ()=>{
-        EventsService.getCountEventsSearch(search,date).then((response)=>{
+    let getSearchEventsCount = async ()=>{
+        try{
+            const response = await EventsService.getCountEventsSearch(search,date);
             if(response.status === 200){
                 if(response.data != 0){
                     setCountPages(Math.ceil(response.data/store.pageSize));
@@ -152,11 +166,14 @@ const List: React.FC<ListProps> = (
                     setCountPages(1)
                 }
             }
-        }).catch((e=>console.log(e)))
+        }catch(e){
+            console.log(e);
+        }
     }
     
-    let getFilterEventsCount = () =>{
-        EventsService.getFilterEventsCount(location,category).then(response=>{
+    let getFilterEventsCount = async () =>{
+        try{
+            const response = await EventsService.getFilterEventsCount(location,category);
             if(response.status === 200){
                 if(response.data != 0){
                     setCountPages(Math.ceil(response.data/store.pageSize));
@@ -165,7 +182,9 @@ const List: React.FC<ListProps> = (
                     setCountPages(1)
                 }
             }
-        }).catch((e=>console.log(e)))
+        }catch(e){
+            console.log(e);
+        }
     }
     
     

@@ -8,7 +8,7 @@ export default class ParticipantService {
     }
     
     static async CanselParticipant(eventId:number,userId:number):Promise<AxiosResponse>{
-        return $api.delete(`/Participants/${eventId}/register/${userId}`);
+        return $api.delete(`/Participants/${eventId}/cancel/${userId}`);
     }
     
     static async fetchParticipants(eventId:number):Promise<AxiosResponse>{

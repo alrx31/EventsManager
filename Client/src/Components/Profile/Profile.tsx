@@ -82,11 +82,6 @@ export const Profile:React.FC<IProfileProps> = ({
                 </div>
 
                 <div className="profile-info-row">
-                    <span>Дата рождения:</span>
-                    <span>{user?.birthDate?.toString()}</span>
-                </div>
-
-                <div className="profile-info-row">
                     <span>Дата регистрации:</span>
                     <span>{user?.registrationDate?.toString()}</span>
                 </div>
